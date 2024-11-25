@@ -9,6 +9,11 @@ internal class WsysDbContext : DbContext {
 
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
+
+    public DbSet<Entrepot> Entrepots { get; set; }
+
+    public DbSet<Produit> Produits { get; set; }
+
     public DbSet<ShippingOrder> ShippingOrders { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
     public DbSet<ShippingOrderProduct> ShippingOrderProducts { get; set; }
@@ -168,6 +173,27 @@ internal class WsysDbContext : DbContext {
 
 
         #endregion
+
+        #region ENTREPOT
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .ToTable(nameof(this.Entrepots))
+            .HasKey(entrepot => entrepot.id);
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .HasIndex(entrepot => entrepot.nomEntrepot)
+            .IsUnique(true);
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property(entrepot => entrepot.id)
+            .HasColumnName(nameof(Entrepot.id))
+            .HasColumnOrder(0)
+            .HasColumnType("int")
+            .UseIdentityColumn(1, 1);
+
+        _= modelBuilder.Entity<Entrepot>()
+            .Property(Entrepot => Entrepot.nomEntrepot
+            )
 
         #region SHIPPING_ORDER
 

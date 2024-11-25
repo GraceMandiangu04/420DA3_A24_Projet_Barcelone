@@ -14,6 +14,7 @@ public class Produit {
     public string nomproduit { get; set; }
     public string descriptionproduit { get; set; }
     public string codeUpcinternational { get; set; }
+    public string nomFichierProduit { get; set; }
     public Client proprietaireProduit { get; set; }
     public Fournisseur fournisseur { get; set; }
     public int qteStock { get; set; }
@@ -36,18 +37,20 @@ public class Produit {
     /// <param name="nomproduit">Le nom du produit</param>
     /// <param name="descriptionproduit">La description du produit </param>
     /// <param name="codeUpcinternational">Le code Upc International </param>
+    /// <param name="nomFichierProduit"> le nom du fichier produit </param>
     /// <param name="proprietaireproduit">L'id du client </param>
     /// <param name="fournisseur">L'id du fournisseur </param>
     /// <param name="qteStock">La quantité des produit en stock </param>
     /// <param name="qteStockVise">La quantite des produit en stock visé </param>
     /// <param name="poids">Le poids de produits </param>
-    
-    public Produit(int id, string Nomproduit, string Descriptionproduit, string CodeUPCInternational , Fournisseur Frournisseur, int QteStock, int QteStockVise,float Poids) 
+
+    public Produit(int id, string Nomproduit, string Descriptionproduit, string CodeUPCInternational , string NomFichierProduit , Fournisseur Frournisseur, int QteStock, int QteStockVise,float Poids) 
         {
         this.Id = id;
         this.nomproduit = Nomproduit;
         this.descriptionproduit = Descriptionproduit;
         this.codeUpcinternational = CodeUPCInternational;
+        this.nomFichierProduit = NomFichierProduit;
         this.fournisseur = Frournisseur;
         this.qteStock = QteStock;
         this.qteStockVise = QteStockVise;
@@ -62,6 +65,7 @@ public class Produit {
     /// <param name="nomproduit">Le nom du produit</param>
     /// <param name="descriptionproduit">La description du produit </param>
     /// <param name="codeUpcinternational">Le code Upc International </param>
+    /// <param name="nomFichierProduit">Le nom du fichier produit </param>
     /// <param name="proprietaireproduit">L'id du client </param>
     /// <param name="fournisseur">L'id du fournisseur </param>
     /// <param name="qteStock">La quantité des produit en stock </param>
@@ -75,6 +79,7 @@ public class Produit {
         string Nomproduit,
         string Descriptionproduit,
         string CodeUPCInternational,
+        string NomFichierProduit,
         Client proprietaireproduit,
         Fournisseur fournisseur,
         int QteStock,
@@ -84,7 +89,7 @@ public class Produit {
         DateTime? datemodified,
         DateTime? dateDelete,
         byte [] rowVersion)
-        : this(Nomproduit, Descriptionproduit, CodeUPCInternational, proprietaireproduit, fournisseur, QteStock, QteStockVise, Poids) {
+        : this(Nomproduit, Descriptionproduit, CodeUPCInternational,NomFichierProduit, proprietaireproduit, fournisseur, QteStock, QteStockVise, Poids) {
 
         this.Id = id;
         this.dateCreated = dateCreated;
@@ -94,10 +99,11 @@ public class Produit {
     
     }
 
-    public Produit(string nomproduit, string descriptionproduit, string codeUPCInternational, Client proprietaireproduit, Fournisseur fournisseur, int qteStock, int qteStockVise, float poids) {
+    public Produit(string nomproduit, string descriptionproduit, string codeUPCInternational,string NomFichierProduit, Client proprietaireproduit, Fournisseur fournisseur, int qteStock, int qteStockVise, float poids) {
         this.nomproduit = nomproduit;
         this.descriptionproduit = descriptionproduit;
         this.codeUpcinternational = codeUPCInternational;
+        this.nomFichierProduit = NomFichierProduit;
         this.proprietaireProduit = proprietaireproduit;
         this.fournisseur = fournisseur;
         this.qteStock = qteStock;
