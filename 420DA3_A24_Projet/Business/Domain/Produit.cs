@@ -17,6 +17,7 @@ public class Produit {
     public string nomFichierProduit { get; set; }
     public Client proprietaireProduit { get; set; }
     public Fournisseur fournisseur { get; set; }
+    public string codeProduitFournisseur { get; set; }
     public int qteStock { get; set; }
     public int qteStockVise { get; set; }
     public float poids { get; set; }
@@ -40,11 +41,12 @@ public class Produit {
     /// <param name="nomFichierProduit"> le nom du fichier produit </param>
     /// <param name="proprietaireproduit">L'id du client </param>
     /// <param name="fournisseur">L'id du fournisseur </param>
+    /// <param name="codeProduitFournisseur">Le code du produit du fournisseur </param>
     /// <param name="qteStock">La quantité des produit en stock </param>
     /// <param name="qteStockVise">La quantite des produit en stock visé </param>
     /// <param name="poids">Le poids de produits </param>
 
-    public Produit(int id, string Nomproduit, string Descriptionproduit, string CodeUPCInternational , string NomFichierProduit , Fournisseur Frournisseur, int QteStock, int QteStockVise,float Poids) 
+    public Produit(int id, string Nomproduit, string Descriptionproduit, string CodeUPCInternational , string NomFichierProduit , Fournisseur Frournisseur, string codeProduitFournisseur, int QteStock, int QteStockVise,float Poids) 
         {
         this.Id = id;
         this.nomproduit = Nomproduit;
@@ -52,6 +54,7 @@ public class Produit {
         this.codeUpcinternational = CodeUPCInternational;
         this.nomFichierProduit = NomFichierProduit;
         this.fournisseur = Frournisseur;
+        this.codeProduitFournisseur = codeProduitFournisseur;
         this.qteStock = QteStock;
         this.qteStockVise = QteStockVise;
         this.poids = Poids;
@@ -68,6 +71,7 @@ public class Produit {
     /// <param name="nomFichierProduit">Le nom du fichier produit </param>
     /// <param name="proprietaireproduit">L'id du client </param>
     /// <param name="fournisseur">L'id du fournisseur </param>
+    /// <param name="codeProduitFournisseur">Le code du produit du fournisseur </param>
     /// <param name="qteStock">La quantité des produit en stock </param>
     /// <param name="qteStockVise">La quantite des produit en stock visé </param>
     /// <param name="poids">Le poids de produits </param>
@@ -82,6 +86,7 @@ public class Produit {
         string NomFichierProduit,
         Client proprietaireproduit,
         Fournisseur fournisseur,
+        string codeProduitFournisseur,
         int QteStock,
         int QteStockVise,
         float Poids,
@@ -89,7 +94,7 @@ public class Produit {
         DateTime? datemodified,
         DateTime? dateDelete,
         byte [] rowVersion)
-        : this(Nomproduit, Descriptionproduit, CodeUPCInternational,NomFichierProduit, proprietaireproduit, fournisseur, QteStock, QteStockVise, Poids) {
+        : this(Nomproduit, Descriptionproduit, CodeUPCInternational,NomFichierProduit, proprietaireproduit, fournisseur,codeProduitFournisseur, QteStock, QteStockVise, Poids) {
 
         this.Id = id;
         this.dateCreated = dateCreated;
@@ -99,13 +104,14 @@ public class Produit {
     
     }
 
-    public Produit(string nomproduit, string descriptionproduit, string codeUPCInternational,string NomFichierProduit, Client proprietaireproduit, Fournisseur fournisseur, int qteStock, int qteStockVise, float poids) {
+    public Produit(string nomproduit, string descriptionproduit, string codeUPCInternational,string NomFichierProduit, Client proprietaireproduit, Fournisseur fournisseur,string codeProduitFournisseur,  int qteStock, int qteStockVise, float poids) {
         this.nomproduit = nomproduit;
         this.descriptionproduit = descriptionproduit;
         this.codeUpcinternational = codeUPCInternational;
         this.nomFichierProduit = NomFichierProduit;
         this.proprietaireProduit = proprietaireproduit;
         this.fournisseur = fournisseur;
+        this.codeProduitFournisseur = codeProduitFournisseur;
         this.qteStock = qteStock;
         this.qteStockVise = qteStockVise;
         this.poids = poids;
@@ -117,7 +123,7 @@ public class Produit {
     /// <returns>Un string représentant le produit.</returns>
     public override string ToString() {
 
-        return $"#{this.Id} - {this.nomproduit} - {this.descriptionproduit} - {this.codeUpcinternational} - {this.proprietaireProduit} - {this.fournisseur} - {this.qteStock} - {this.qteStockVise} - {this.poids}";
+        return $"#{this.Id} - {this.nomproduit} - {this.descriptionproduit} - {this.codeUpcinternational} - {this.proprietaireProduit} - {this.fournisseur} - {this.codeProduitFournisseur} - {this.qteStock} - {this.qteStockVise} - {this.poids}";
 
     }
    

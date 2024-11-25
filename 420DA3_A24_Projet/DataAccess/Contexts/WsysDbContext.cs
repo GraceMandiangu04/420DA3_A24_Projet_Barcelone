@@ -181,19 +181,190 @@ internal class WsysDbContext : DbContext {
             .HasKey(entrepot => entrepot.id);
 
         _ = modelBuilder.Entity<Entrepot>()
-            .HasIndex(entrepot => entrepot.nomEntrepot)
-            .IsUnique(true);
-
-        _ = modelBuilder.Entity<Entrepot>()
             .Property(entrepot => entrepot.id)
             .HasColumnName(nameof(Entrepot.id))
             .HasColumnOrder(0)
-            .HasColumnType("int")
-            .UseIdentityColumn(1, 1);
+            .HasColumnType("int");
 
-        _= modelBuilder.Entity<Entrepot>()
-            .Property(Entrepot => Entrepot.nomEntrepot
-            )
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property(Entrepot => Entrepot.nomEntrepot)
+            .HasColumnName("nomEntrepot")
+            .HasColumnOrder(1)
+            .HasColumnType($"nVarchar({Entrepot.NAME_MAX_LENGTH})")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Entrepot>()
+           .Property(Entrepot => Entrepot.adresse)
+           .HasColumnName("adresse")
+           .HasColumnOrder(2)
+           .HasColumnType($"nVarchar({Entrepot.ADRESSE_MAX_LENGTH})")
+           .IsRequired(true);
+
+        _ = modelBuilder.Entity<Entrepot>()
+           .Property(Entrepot => Entrepot.DateCreated)
+           .HasColumnName("DateCreated")
+           .HasColumnOrder(3)
+           .HasColumnType("datetime2(5)") 
+           .HasPrecision(5) 
+           .HasDefaultValueSql("GETUTCDATE()") 
+           .IsRequired(true);
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property(Entrepot => Entrepot.DateModified)
+            .HasColumnName("DateModified")
+            .HasColumnOrder(4)
+            .HasColumnType("datetime2(5)")
+            .HasPrecision(5)
+            .IsRequired(false); 
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property(Entrepot => Entrepot.DateDeleted)
+            .HasColumnName("DateDeleted")
+            .HasColumnOrder(5)
+            .HasColumnType("datetime2(5)")
+            .HasPrecision(5)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property( Entrepot => Entrepot.RowVersion)
+            .HasColumnOrder(6)
+            .HasColumnName("RowVersion")
+            .IsRowVersion();
+
+        #endregion
+
+        #region Produit
+
+        _ = modelBuilder.Entity<Produit>()
+            .ToTable(nameof(this.Produits))
+            .HasKey(Produit => Produit.Id);
+
+        _ = modelBuilder.Entity<Produit>()
+            .Property(Produit => Produit.Id)
+            .HasColumnName(nameof(Produit.Id))
+            .HasColumnOrder(0)
+            .HasColumnType("int");
+
+
+        _ = modelBuilder.Entity<Produit>()
+            .Property(Produit => Produit.nomproduit)
+            .HasColumnName("nomproduit")
+            .HasColumnOrder(1)
+            .HasColumnType($"nVarchar")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+           .Property(Produit => Produit.descriptionproduit)
+           .HasColumnName("descriptionproduit")
+           .HasColumnOrder(2)
+           .HasColumnType($"nVarchar")
+           .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+           .Property(Produit=> Produit.codeUpcinternational)
+           .HasColumnName("codeUpcinternational")
+           .HasColumnOrder(3)
+           .HasColumnType($"nVarchar")
+           .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+           .Property(Produit => Produit.nomFichierProduit)
+           .HasColumnName("nomFichierProduit")
+           .HasColumnOrder(4)
+           .HasColumnType($"nVarchar")
+           .IsRequired(false);
+
+        _ = modelBuilder.Entity<Produit>()
+            .Property(Produit => Produit.proprietaireProduit)
+            .HasColumnName("proprietaireProduit")
+            .HasColumnOrder(5)
+            .HasColumnType("$nVarchar")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+            .Property(Produit => Produit.fournisseur)
+            .HasColumnName("fournisseur")
+            .HasColumnOrder(6)
+            .HasColumnType("$nVarchar")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+           .Property(Produit => Produit.codeProduitFournisseur)
+           .HasColumnName("codeProduitFournisseur")
+           .HasColumnOrder(7)
+           .HasColumnType("$nVarchar")
+           .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+          .Property(Produit => Produit.qteStock)
+          .HasColumnName("Quantité en stock")
+          .HasColumnOrder(8)
+          .HasColumnType("int")
+          .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+         .Property(Produit => Produit.qteStockVise)
+         .HasColumnName("Quantité visée")
+         .HasColumnOrder(9)
+         .HasColumnType("int")
+         .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+         .Property(Produit => Produit.poids)
+         .HasColumnName("Poids")
+         .HasColumnOrder(10)
+         .HasColumnType("Float")
+         .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+          .Property(Produit => Produit.dateCreated)
+          .HasColumnName("DateCreated")
+          .HasColumnOrder(11)
+          .HasColumnType("datetime2(5)")
+          .HasPrecision(13)
+          .HasDefaultValueSql("GETUTCDATE()")
+          .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+          .Property(Produit => Produit.dateModified)
+          .HasColumnName("DateModified")
+          .HasColumnOrder(12)
+          .HasColumnType("datetime2(5)")
+          .HasPrecision(13)
+          .HasDefaultValueSql("GETUTCDATE()")
+          .IsRequired(true);
+
+        _ = modelBuilder.Entity<Produit>()
+          .Property(Produit => Produit.dateDelete)
+          .HasColumnName("DateDeleted")
+          .HasColumnOrder(13)
+          .HasColumnType("datetime2(5)")
+          .HasPrecision(13)
+          .HasDefaultValueSql("GETUTCDATE()")
+          .IsRequired(true);
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property(Entrepot => Entrepot.RowVersion)
+            .HasColumnOrder(6)
+            .HasColumnName("RowVersion")
+            .IsRowVersion();
+
+
+
+        _ = modelBuilder.Entity<Entrepot>()
+            .Property(Entrepot => Entrepot.RowVersion)
+            .HasColumnOrder(6)
+            .HasColumnName("RowVersion")
+            .IsRowVersion();
+
+        #endregion
+
+
+
+
+
+
 
         #region SHIPPING_ORDER
 
@@ -502,5 +673,9 @@ internal class WsysDbContext : DbContext {
 
         #endregion
 
+    }
+
+    private object dateTimeUtcConverter(object arg) {
+        throw new NotImplementedException();
     }
 }
