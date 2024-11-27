@@ -18,7 +18,7 @@ internal partial class UserView : Form {
     /// <summary>
     /// TODO @PROF : documenter
     /// </summary>
-    public User CurrentEntityInstance { get; private set; }
+    public User CurrentEntityInstance { get; private set; } = null!;
 
     /// <summary>
     /// TODO @PROF : documenter
