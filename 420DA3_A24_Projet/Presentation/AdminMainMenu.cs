@@ -1,5 +1,6 @@
 ﻿using _420DA3_A24_Projet.Business;
 using _420DA3_A24_Projet.Business.Domain;
+using Project_Utilities.Enums;
 
 namespace _420DA3_A24_Projet.Presentation;
 internal partial class AdminMainMenu : Form {
@@ -121,6 +122,81 @@ internal partial class AdminMainMenu : Form {
         }
 
     }
+
+    #endregion
+
+
+    #region GESTION DES SHIPPING ORDERS
+
+    private void ReloadSOSearchResults(List<ShippingOrder> searchResults) {
+        this.soSearchResults.Items.Clear();
+        this.soSearchResults.SelectedItem = null;
+        foreach (ShippingOrder so in searchResults) {
+            _ = this.soSearchResults.Items.Add(so);
+        }
+    }
+
+    private void ButtonCreateSO_Click(object sender, EventArgs e) {
+        ShippingOrder? createdOrder = this.parentApp.ShippingOrderService.OpenManagementWindowForCreation();
+        if (createdOrder != null) {
+            _ = this.soSearchResults.Items.Add(createdOrder);
+            this.soSearchResults.SelectedItem = createdOrder;
+        }
+    }
+
+    private void SoSearchTextBox_TextChanged(object sender, EventArgs e) {
+        List<ShippingOrder> results = this.parentApp.ShippingOrderService.SearchOrders(this.soSearchTextBox.Text.Trim());
+        this.ReloadSOSearchResults(results);
+    }
+
+    private void SoSearchResults_SelectedIndexChanged(object sender, EventArgs e) {
+        ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
+        if (selectedSO != null) {
+            if (selectedSO.Status == ShippingOrderStatusEnum.Unassigned || selectedSO.Status == ShippingOrderStatusEnum.New) {
+                this.buttonDeleteSO.Enabled = true;
+                this.buttonEditSO.Enabled = true;
+            } else {
+                this.buttonDeleteSO.Enabled = false;
+                this.buttonEditSO.Enabled = false;
+            }
+            this.buttonViewSO.Enabled = true;
+        } else {
+            this.buttonDeleteSO.Enabled = false;
+            this.buttonEditSO.Enabled = false;
+            this.buttonViewSO.Enabled = false;
+        }
+
+    }
+
+    private void ButtonViewSO_Click(object sender, EventArgs e) {
+        ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
+        if (selectedSO != null) {
+            _ = this.parentApp.ShippingOrderService.OpenManagementWindowForDetailsView(selectedSO);
+        }
+    }
+
+    private void ButtonEditSO_Click(object sender, EventArgs e) {
+        ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
+        if (selectedSO != null) {
+            if (selectedSO.Status != ShippingOrderStatusEnum.Unassigned || selectedSO.Status != ShippingOrderStatusEnum.New) {
+                throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être modifiés.");
+            }
+            _ = this.parentApp.ShippingOrderService.OpenManagementWindowForEdition(selectedSO);
+        }
+
+    }
+
+    private void ButtonDeleteSO_Click(object sender, EventArgs e) {
+        ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
+        if (selectedSO != null) {
+            if (selectedSO.Status != ShippingOrderStatusEnum.Unassigned || selectedSO.Status != ShippingOrderStatusEnum.New) {
+                throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être supprimés.");
+            }
+            _ = this.parentApp.ShippingOrderService.OpenManagementWindowForDeletion(selectedSO);
+        }
+
+    }
+
 
     #endregion
 
