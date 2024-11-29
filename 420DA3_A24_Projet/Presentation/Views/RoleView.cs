@@ -3,9 +3,9 @@
 namespace _420DA3_A24_Projet.Presentation.Views;
 internal partial class RoleView : Form {
 
-    private WsysApplication app;
+    private WsysApplication parentApp;
     public RoleView(WsysApplication application) {
-        this.app = application;
+        this.parentApp = application;
         this.InitializeComponent();
     }
 }

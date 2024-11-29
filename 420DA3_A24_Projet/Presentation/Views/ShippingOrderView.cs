@@ -259,7 +259,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void BtnCancel_Click(object sender, EventArgs e) {
-        this.parentApp.ShippingOrderService.CancelOrderChanges(this.modifications);
+        this.parentApp.ShippingOrderService.CancelOrderChanges(this.CurrentEntityInstance, this.modifications);
         this.DialogResult = DialogResult.Cancel;
     }
 

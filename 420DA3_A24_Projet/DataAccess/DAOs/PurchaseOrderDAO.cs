@@ -34,15 +34,16 @@ internal class PurchaseOrderDAO {
     /// <summary>
     /// TODO @PROF: documenter
     /// </summary>
-    /// <param name="loggedIEmployeeWarehouse"></param>
+    /// <param name="loggedInEmployeeWarehouse"></param>
     /// <returns></returns>
-    public List<PurchaseOrder> GetUncompletePOsForWarehouse(Warehouse loggedIEmployeeWarehouse) {
+    public List<PurchaseOrder> GetIncompletePOsForWarehouse(Entrepot loggedInEmployeeWarehouse, bool includeDeleted = false) {
         return this.context.PurchaseOrders
-            .Where(po => po.DestinationWarehouseId == loggedIEmployeeWarehouse.Id
+            .Where(po => po.DestinationWarehouseId == loggedInEmployeeWarehouse.id
+                && (includeDeleted || po.DateDeleted == null)
                 && po.Status != PurchaseOrderStatusEnum.Completed
             )
             .Include(po => po.OrderedProduct)
-                .ThenInclude(product => product.OwnerClient)
+                .ThenInclude(product => product.proprietaireProduit)
             .Include(po => po.DestinationWarehouse)
             .ToList();
     }
@@ -57,7 +58,7 @@ internal class PurchaseOrderDAO {
         return this.context.PurchaseOrders
             .Where(po => po.Id == id && (includeDeleted || po.DateDeleted == null))
             .Include(po => po.OrderedProduct)
-                .ThenInclude(product => product.OwnerClient)
+                .ThenInclude(product => product.proprietaireProduit)
             .Include(po => po.DestinationWarehouse)
             .SingleOrDefault();
     }
@@ -71,15 +72,15 @@ internal class PurchaseOrderDAO {
     public List<PurchaseOrder> Search(string criterion, bool includeDeleted = false) {
         return this.context.PurchaseOrders
             .Include(po => po.OrderedProduct)
-                .ThenInclude(product => product.OwnerClient)
+                .ThenInclude(product => product.proprietaireProduit)
             .Include(po => po.DestinationWarehouse)
             .Where(po => (
                     po.Id.ToString().Contains(criterion)
-                    || po.OrderedProduct.Name.ToLower().Contains(criterion.ToLower())
-                    || po.OrderedProduct.UpcCode.ToLower().Contains(criterion.ToLower())
-                    || po.OrderedProduct.SupplierCode.ToLower().Contains(criterion.ToLower())
-                    || po.OrderedProduct.OwnerClient.ClientName.ToLower().Contains(criterion.ToLower())
-                    || po.DestinationWarehouse.WarehouseName.ToLower().Contains(criterion.ToLower())
+                    || po.OrderedProduct.nomproduit.ToLower().Contains(criterion.ToLower())
+                    || po.OrderedProduct.codeUpcinternational.ToLower().Contains(criterion.ToLower())
+                    || po.OrderedProduct.codeProduitFournisseur.ToLower().Contains(criterion.ToLower())
+                    || po.OrderedProduct.proprietaireProduit.NomCompagnie.ToLower().Contains(criterion.ToLower())
+                    || po.DestinationWarehouse.nomEntrepot.ToLower().Contains(criterion.ToLower())
                 ) && (includeDeleted || po.DateDeleted == null))
             .ToList();
     }
