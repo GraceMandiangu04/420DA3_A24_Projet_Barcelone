@@ -163,16 +163,16 @@ public class ShippingOrder {
         StringBuilder sb = new StringBuilder();
         switch (this.Status) {
             case ShippingOrderStatusEnum.Processing:
-                _ = sb.Append($"#{this.Id} ({this.Status} by {this.FulfillerEmployee?.Username}) - Client: #{this.SourceClient.Id} {this.SourceClient.ClientName}");
+                _ = sb.Append($"#{this.Id} ({this.Status} by {this.FulfillerEmployee?.Username}) - Client: #{this.SourceClient.Id} {this.SourceClient.NomCompagnie}");
                 break;
             case ShippingOrderStatusEnum.Packaged:
             case ShippingOrderStatusEnum.Shipped:
-                _ = sb.Append($"#{this.Id} ({this.Status} - Shipment: {this.Shipment?.CodeSuivi}) - Client: #{this.SourceClient.Id} {this.SourceClient.ClientName}");
+                _ = sb.Append($"#{this.Id} ({this.Status} - Shipment: {this.Shipment?.CodeSuivi}) - Client: #{this.SourceClient.Id} {this.SourceClient.NomCompagnie}");
                 break;
             case ShippingOrderStatusEnum.New:
             case ShippingOrderStatusEnum.Unassigned:
             default:
-                _ = sb.Append($"#{this.Id} ({this.Status}) - Client: #{this.SourceClient.Id} {this.SourceClient.ClientName}");
+                _ = sb.Append($"#{this.Id} ({this.Status}) - Client: #{this.SourceClient.Id} {this.SourceClient.NomCompagnie}");
                 break;
 
         }

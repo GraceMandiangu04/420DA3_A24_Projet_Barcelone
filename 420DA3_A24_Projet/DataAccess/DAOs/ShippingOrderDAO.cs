@@ -27,16 +27,16 @@ internal class ShippingOrderDAO {
     /// <param name="warehouse"></param>
     /// <param name="includeDeleted"></param>
     /// <returns></returns>
-    public List<ShippingOrder> GetUnassignedByWarehouse(Warehouse warehouse, bool includeDeleted = false) {
+    public List<ShippingOrder> GetUnassignedByWarehouse(Entrepot warehouse, bool includeDeleted = false) {
         return this.context.ShippingOrders
             .Include(so => so.SourceClient)
-                .ThenInclude(client => client.AssignedWarehouse)
+                .ThenInclude(client => client.Entrepot)
             .Include(so => so.CreatorEmployee)
             .Include(so => so.DestinationAddress)
             .Include(so => so.ShippingOrderProducts)
                 .ThenInclude(sop => sop.Product)
             .Where(so => so.Status == ShippingOrderStatusEnum.Unassigned
-                && so.SourceClient.AssignedWarehouse.Id == warehouse.Id
+                && so.SourceClient.Entrepot.id == warehouse.id
                 && (includeDeleted || so.DateDeleted == null)
             )
             .ToList();
@@ -52,13 +52,14 @@ internal class ShippingOrderDAO {
     public List<ShippingOrder> GetProcessingByEmployee(User employee, bool includeDeleted = false) {
         return this.context.ShippingOrders
             .Include(so => so.SourceClient)
-                .ThenInclude(client => client.AssignedWarehouse)
+                .ThenInclude(client => client.Entrepot)
             .Include(so => so.CreatorEmployee)
             .Include(so => so.DestinationAddress)
             .Include(so => so.FulfillerEmployee)
             .Include(so => so.ShippingOrderProducts)
                 .ThenInclude(sop => sop.Product)
             .Where(so => so.Status == ShippingOrderStatusEnum.Processing
+                && so.FulfillerEmployee != null
                 && so.FulfillerEmployee.Id == employee.Id
                 && (includeDeleted || so.DateDeleted == null)
             )
@@ -71,17 +72,17 @@ internal class ShippingOrderDAO {
     /// <param name="warehouse"></param>
     /// <param name="includeDeleted"></param>
     /// <returns></returns>
-    public List<ShippingOrder> GetPackagedByWarehouse(Warehouse warehouse, bool includeDeleted = false) {
+    public List<ShippingOrder> GetPackagedByWarehouse(Entrepot warehouse, bool includeDeleted = false) {
         return this.context.ShippingOrders
             .Include(so => so.SourceClient)
-                .ThenInclude(client => client.AssignedWarehouse)
+                .ThenInclude(client => client.Entrepot)
             .Include(so => so.CreatorEmployee)
             .Include(so => so.DestinationAddress)
             .Include(so => so.Shipment)
             .Include(so => so.ShippingOrderProducts)
                 .ThenInclude(sop => sop.Product)
             .Where(so => so.Status == ShippingOrderStatusEnum.Packaged
-                && so.SourceClient.AssignedWarehouse.Id == warehouse.Id
+                && so.SourceClient.Entrepot.id == warehouse.id
                 && (includeDeleted || so.DateDeleted == null)
             )
             .ToList();
@@ -96,7 +97,7 @@ internal class ShippingOrderDAO {
     public ShippingOrder? GetById(int id, bool includeDeleted = false) {
         return this.context.ShippingOrders
             .Include(so => so.SourceClient)
-                .ThenInclude(client => client.AssignedWarehouse)
+                .ThenInclude(client => client.Entrepot)
             .Include(so => so.CreatorEmployee)
             .Include(so => so.DestinationAddress)
             .Include(so => so.Shipment)
@@ -118,7 +119,7 @@ internal class ShippingOrderDAO {
     public List<ShippingOrder> Search(string criterion, bool includeDeleted = false) {
         return this.context.ShippingOrders
             .Include(so => so.SourceClient)
-                .ThenInclude(client => client.AssignedWarehouse)
+                .ThenInclude(client => client.Entrepot)
             .Include(so => so.CreatorEmployee)
             .Include(so => so.DestinationAddress)
             .Include(so => so.Shipment)
@@ -127,10 +128,10 @@ internal class ShippingOrderDAO {
             .Where(so =>
                     so.Id.ToString().Contains(criterion)
                     || so.Status.ToString().ToLower().Contains(criterion.ToLower())
-                    || so.SourceClient.Name.ToLower().Contains(criterion.ToLower())
+                    || so.SourceClient.NomCompagnie.ToLower().Contains(criterion.ToLower())
                     || so.DestinationAddress.Destinataire.ToLower().Contains(criterion.ToLower())
                     || so.ShippingOrderProducts.Any(sop => sop.Product.Id.ToString().Contains(criterion))
-                    || so.ShippingOrderProducts.Any(sop => sop.Product.nom_produit.ToLower().Contains(criterion.ToLower()))
+                    || so.ShippingOrderProducts.Any(sop => sop.Product.nomproduit.ToLower().Contains(criterion.ToLower()))
                     || ((so.Shipment == null || so.Shipment.CodeSuivi.ToLower().Contains(criterion.ToLower()))
                 && (includeDeleted || so.DateDeleted == null))
             )
