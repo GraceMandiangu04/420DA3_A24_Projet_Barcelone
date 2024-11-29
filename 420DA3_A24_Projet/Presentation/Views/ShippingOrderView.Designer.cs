@@ -124,6 +124,7 @@ partial class ShippingOrderView {
         this.btnAction.TabIndex = 3;
         this.btnAction.Text = "ACTION";
         this.btnAction.UseVisualStyleBackColor = true;
+        this.btnAction.Click += this.BtnAction_Click;
         // 
         // btnCancel
         // 
@@ -134,6 +135,7 @@ partial class ShippingOrderView {
         this.btnCancel.TabIndex = 2;
         this.btnCancel.Text = "Annuler";
         this.btnCancel.UseVisualStyleBackColor = true;
+        this.btnCancel.Click += this.BtnCancel_Click;
         // 
         // centerTLP
         // 

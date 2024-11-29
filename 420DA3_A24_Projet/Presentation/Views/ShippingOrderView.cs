@@ -1,6 +1,7 @@
 ﻿using _420DA3_A24_Projet.Business;
 using _420DA3_A24_Projet.Business.Domain;
 using _420DA3_A24_Projet.Business.Domain.Pivots;
+using _420DA3_A24_Projet.Business.Domain.Utils;
 using Project_Utilities.Enums;
 
 namespace _420DA3_A24_Projet.Presentation.Views;
@@ -8,6 +9,7 @@ internal partial class ShippingOrderView : Form {
 
     private WsysApplication parentApp;
     private bool isInitialized = false;
+    private List<ShippingOrderProductModification> modifications = new List<ShippingOrderProductModification>();
 
     public ViewActionsEnum CurrentAction { get; private set; }
     public ShippingOrder CurrentEntityInstance { get; private set; } = null!;
@@ -22,7 +24,7 @@ internal partial class ShippingOrderView : Form {
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public DialogResult OpenForCreation(User instance) {
+    public DialogResult OpenForCreation(ShippingOrder instance) {
         this.PreOpenSetup(instance, ViewActionsEnum.Creation, "Création d'un utilisateur", "Créer");
         return this.ShowDialog();
     }
@@ -32,7 +34,7 @@ internal partial class ShippingOrderView : Form {
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public DialogResult OpenForDetailsView(User instance) {
+    public DialogResult OpenForDetailsView(ShippingOrder instance) {
         this.PreOpenSetup(instance, ViewActionsEnum.Visualization, "Détails d'un utilisateur", "OK");
         return this.ShowDialog();
     }
@@ -42,7 +44,7 @@ internal partial class ShippingOrderView : Form {
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public DialogResult OpenForModification(User instance) {
+    public DialogResult OpenForModification(ShippingOrder instance) {
         this.PreOpenSetup(instance, ViewActionsEnum.Edition, "Modifier un utilisateur", "Enregistrer");
         return this.ShowDialog();
     }
@@ -52,7 +54,7 @@ internal partial class ShippingOrderView : Form {
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
-    public DialogResult OpenForDeletion(User instance) {
+    public DialogResult OpenForDeletion(ShippingOrder instance) {
         this.PreOpenSetup(instance, ViewActionsEnum.Deletion, "Supprimer un utilisateur", "Supprimer");
         return this.ShowDialog();
     }
@@ -67,6 +69,8 @@ internal partial class ShippingOrderView : Form {
     private void PreOpenSetup(ShippingOrder instance, ViewActionsEnum action, string windowTitle, string actionButtonText) {
         // load selectors with items if not loaded
         this.Initialize();
+        // clear the modifications list
+        this.modifications.Clear();
         // remember what the current action is
         this.CurrentAction = action;
         // remember which instance we are currently working with
@@ -149,14 +153,18 @@ internal partial class ShippingOrderView : Form {
         this.dateModifiedValue.Value = order.DateModified ?? DateTime.Now;
         this.dateDeletedValue.Value = order.DateDeleted ?? DateTime.Now;
 
+        this.ReloadOrderProductsListBox(order);
+
+        return order;
+    }
+
+    private void ReloadOrderProductsListBox(ShippingOrder order) {
         this.orderProductsList.Items.Clear();
         this.orderProductsList.SelectedItem = null;
         this.orderProductsList.SelectedItems.Clear();
         foreach (ShippingOrderProduct product in order.ShippingOrderProducts) {
             _ = this.orderProductsList.Items.Add(product);
         }
-
-        return order;
     }
 
     private ShippingOrder GetDataFromControls(ShippingOrder order) {
@@ -199,7 +207,14 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void ButtonAddProduct_Click(object sender, EventArgs e) {
-
+        Produit? selectedProduct = this.productSearchResultsListBox.SelectedItem as Produit;
+        int quantity = (int) this.productAddQuantityValue.Value;
+        if (selectedProduct is not null && quantity > 0) {
+            ShippingOrderProduct newProductAssociation = new ShippingOrderProduct(selectedProduct.Id, quantity);
+            this.CurrentEntityInstance.ShippingOrderProducts.Add(newProductAssociation);
+            this.modifications.Add(new ShippingOrderProductModification(newProductAssociation, ShippingOrderProductModificationTypeEnum.Addition));
+            this.ReloadOrderProductsListBox(this.CurrentEntityInstance);
+        }
     }
 
     private void OrderProductsList_SelectedIndexChanged(object sender, EventArgs e) {
@@ -215,10 +230,56 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void ButtonRemove_Click(object sender, EventArgs e) {
-
+        ShippingOrderProduct? selectedShippingOrderProduct = this.orderProductsList.SelectedItem as ShippingOrderProduct;
+        if (selectedShippingOrderProduct is not null) {
+            _ = this.CurrentEntityInstance.ShippingOrderProducts.Remove(selectedShippingOrderProduct);
+            this.modifications.Add(new ShippingOrderProductModification(selectedShippingOrderProduct, ShippingOrderProductModificationTypeEnum.Removal));
+            this.ReloadOrderProductsListBox(this.CurrentEntityInstance);
+        }
     }
 
     private void ProductChangeQuantityValue_ValueChanged(object sender, EventArgs e) {
+        ShippingOrderProduct? selectedShippingOrderProduct = this.orderProductsList.SelectedItem as ShippingOrderProduct;
+        int newQuantity = (int) this.productChangeQuantityValue.Value;
+        if (selectedShippingOrderProduct is not null) {
+            ShippingOrderProductModification? existingModification = this.modifications.Find(mod => mod.ShippingOrderProduct == selectedShippingOrderProduct);
+            if (existingModification is null) {
+                ShippingOrderProductModification modification = new ShippingOrderProductModification(selectedShippingOrderProduct, ShippingOrderProductModificationTypeEnum.Modification);
+                modification.OriginalQuantity = selectedShippingOrderProduct.Quantity;
+                modification.NewQuantity = newQuantity;
+                this.modifications.Add(modification);
 
+            } else {
+                existingModification.NewQuantity = newQuantity;
+            }
+            selectedShippingOrderProduct.Quantity = newQuantity;
+            // TODO @PROF: check mist à jour de l'Affichage de la quantité dans la liste
+            this.orderProductsList.Refresh();
+        }
+    }
+
+    private void BtnCancel_Click(object sender, EventArgs e) {
+        this.parentApp.ShippingOrderService.CancelOrderChanges(this.modifications);
+        this.DialogResult = DialogResult.Cancel;
+    }
+
+    private void BtnAction_Click(object sender, EventArgs e) {
+        try {
+            switch (this.CurrentAction) {
+                case ViewActionsEnum.Creation:
+                    break;
+                case ViewActionsEnum.Edition:
+                    break;
+                case ViewActionsEnum.Deletion:
+                    break;
+                case ViewActionsEnum.Visualization:
+                default:
+                    break;
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+        this.DialogResult = DialogResult.OK;
     }
 }
