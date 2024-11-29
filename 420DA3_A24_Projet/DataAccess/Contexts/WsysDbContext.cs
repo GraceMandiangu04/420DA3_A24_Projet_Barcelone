@@ -19,6 +19,8 @@ internal class WsysDbContext : DbContext {
 
     public DbSet<Produit> Produits { get; set; }
 
+    public DbSet<Adresse> Adresses { get; set; }
+    public DbSet<Expedition> Expeditions { get; set; }
 
     public DbSet<Fournisseur> Fournisseurs { get; set; }
     public DbSet<Client> Clients { get; set; }
@@ -786,6 +788,155 @@ internal class WsysDbContext : DbContext {
             .HasForeignKey(produit => produit.ClientId)
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Cascade);
+
+        #endregion
+
+        #region ADRESSE
+
+        _ = modelBuilder.Entity<Adresse>()
+            .ToTable(nameof(this.Adresses))
+            .HasKey(adresse => adresse.AdresseId);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.AdresseId)
+            .HasColumnName(nameof(Adresse.AdresseId))
+            .HasColumnOrder(0)
+            .HasColumnType("int")
+            .UseIdentityColumn(1, 1);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.TypeAdresse)
+            .HasColumnName(nameof(Adresse.TypeAdresse))
+            .HasColumnOrder(1)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Destinataire)
+            .HasColumnName(nameof(Adresse.Destinataire))
+            .HasColumnOrder(2)
+            .HasColumnType("nvarchar(100)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Rue)
+            .HasColumnName(nameof(Adresse.Rue))
+            .HasColumnOrder(3)
+            .HasColumnType("nvarchar(100)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Ville)
+            .HasColumnName(nameof(Adresse.Ville))
+            .HasColumnOrder(4)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Province)
+            .HasColumnName(nameof(Adresse.Province))
+            .HasColumnOrder(5)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Pays)
+            .HasColumnName(nameof(Adresse.Pays))
+            .HasColumnOrder(6)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.CodePostal)
+            .HasColumnName(nameof(Adresse.CodePostal))
+            .HasColumnOrder(7)
+            .HasColumnType("nvarchar(10)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.DateCreation)
+            .HasColumnName(nameof(Adresse.DateCreation))
+            .HasColumnOrder(8)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .HasDefaultValueSql("GETDATE()")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.DateModification)
+            .HasColumnName(nameof(Adresse.DateModification))
+            .HasColumnOrder(9)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.DateSuppression)
+            .HasColumnName(nameof(Adresse.DateSuppression))
+            .HasColumnOrder(10)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        #endregion
+
+        #region EXPEDITION
+
+        _ = modelBuilder.Entity<Expedition>()
+            .ToTable(nameof(this.Expeditions))
+            .HasKey(expedition => expedition.ExpeditionId);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.ExpeditionId)
+            .HasColumnName(nameof(Expedition.ExpeditionId))
+            .HasColumnOrder(0)
+            .HasColumnType("int")
+            .UseIdentityColumn(1, 1);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.ServiceLivraison)
+            .HasColumnName(nameof(Expedition.ServiceLivraison))
+            .HasColumnOrder(1)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.CodeSuivi)
+            .HasColumnName(nameof(Expedition.CodeSuivi))
+            .HasColumnOrder(2)
+            .HasColumnType("nvarchar(100)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.DateCreation)
+            .HasColumnName(nameof(Expedition.DateCreation))
+            .HasColumnOrder(3)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .HasDefaultValueSql("GETDATE()")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.DateModification)
+            .HasColumnName(nameof(Expedition.DateModification))
+            .HasColumnOrder(4)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.DateSuppression)
+            .HasColumnName(nameof(Expedition.DateSuppression))
+            .HasColumnOrder(5)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .HasOne(expedition => expedition.OrdreExpedition)
+            .WithOne(order => order.Shipment)
+            .HasForeignKey<Expedition>(expedition => expedition.OrdreExpeditionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         #endregion
 
