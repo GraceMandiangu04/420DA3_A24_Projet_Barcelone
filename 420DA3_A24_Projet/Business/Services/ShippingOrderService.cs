@@ -158,8 +158,19 @@ internal class ShippingOrderService {
         // TODO @PROF: vérifier si EF Core va supporter cette approche avec les ShippingOrderProducts
         // qui n'ont pas de ShippingOrderId encore.
         foreach (ShippingOrderProduct sop in order.ShippingOrderProducts) {
+
+            // ajouter l'association SO <-> produit créé au suivi de EF Core
             _ = this.context.ShippingOrderProducts.Add(sop);
+
+            // mettre à jour la quantité en stock du produit
             sop.Product.qteStock -= sop.Quantity;
+
+            // Créer un ordre de restockage si la qté en stock est < 50% de la qté désirée
+            if (sop.Product.qteStock < sop.Product.qteStockVise * 0.5) {
+                int quantity = sop.Product.qteStockVise - sop.Product.qteStock;
+                PurchaseOrder newPO = new PurchaseOrder(sop.Product.Id, order.SourceClient.EntrepotId, quantity);
+                _ = parentApp.PurchaseOrderService.CreatePO(newPO);
+            }
         }
         return this.dao.Create(order);
 
@@ -176,22 +187,52 @@ internal class ShippingOrderService {
         if (order.Status != ShippingOrderStatusEnum.Unassigned && order.Status != ShippingOrderStatusEnum.New) {
             throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être modifiés.");
         }
-        foreach (ShippingOrderProductModification modification in modifications) {
-            switch (modification.ModificationType) {
+        foreach (ShippingOrderProductModification sopModif in modifications) {
+            switch (sopModif.ModificationType) {
                 case ShippingOrderProductModificationTypeEnum.Addition:
-                    _ = this.context.ShippingOrderProducts.Add(modification.ShippingOrderProduct);
-                    modification.ShippingOrderProduct.Product.qteStock -= modification.ShippingOrderProduct.Quantity;
+                    // Produit ajouté à la commande
+
+                    _ = this.context.ShippingOrderProducts.Add(sopModif.ShippingOrderProduct);
+
+                    // mettre à jour la quantité en stock du produit
+                    sopModif.ShippingOrderProduct.Product.qteStock -= sopModif.ShippingOrderProduct.Quantity;
+
+                    // Créer un ordre de restockage si la qté en stock est < 50% de la qté désirée
+                    if (sopModif.ShippingOrderProduct.Product.qteStock < sopModif.ShippingOrderProduct.Product.qteStockVise * 0.5) {
+                        int quantity = sopModif.ShippingOrderProduct.Product.qteStockVise - sopModif.ShippingOrderProduct.Product.qteStock;
+                        PurchaseOrder newPO = new PurchaseOrder(sopModif.ShippingOrderProduct.Product.Id, order.SourceClient.EntrepotId, quantity);
+                        _ = parentApp.PurchaseOrderService.CreatePO(newPO);
+                    }
                     break;
                 case ShippingOrderProductModificationTypeEnum.Modification:
-                    if (modification.NewQuantity > modification.OriginalQuantity) {
-                        modification.ShippingOrderProduct.Product.qteStock -= modification.NewQuantity - modification.OriginalQuantity;
+                    // Quantité de produit dans la commande modifiée
+
+                    if (sopModif.NewQuantity > sopModif.OriginalQuantity) {
+                        // quantité augmentée
+
+                        // mettre à jour la quantité en stock du produit
+                        sopModif.ShippingOrderProduct.Product.qteStock -= sopModif.NewQuantity - sopModif.OriginalQuantity;
+
+                        // Créer un ordre de restockage si la qté en stock est < 50% de la qté désirée
+                        if (sopModif.ShippingOrderProduct.Product.qteStock < sopModif.ShippingOrderProduct.Product.qteStockVise * 0.5) {
+                            int quantity = sopModif.ShippingOrderProduct.Product.qteStockVise - sopModif.ShippingOrderProduct.Product.qteStock;
+                            PurchaseOrder newPO = new PurchaseOrder(sopModif.ShippingOrderProduct.Product.Id, order.SourceClient.EntrepotId, quantity);
+                            _ = parentApp.PurchaseOrderService.CreatePO(newPO);
+                        }
                     } else {
-                        modification.ShippingOrderProduct.Product.qteStock += modification.OriginalQuantity - modification.NewQuantity;
+                        // quantité diminuée (ou égale)
+
+                        // mettre à jour la quantité en stock du produit
+                        sopModif.ShippingOrderProduct.Product.qteStock += sopModif.OriginalQuantity - sopModif.NewQuantity;
                     }
                     break;
                 case ShippingOrderProductModificationTypeEnum.Removal:
-                    _ = this.context.ShippingOrderProducts.Remove(modification.ShippingOrderProduct);
-                    modification.ShippingOrderProduct.Product.qteStock += modification.ShippingOrderProduct.Quantity;
+                    // produit retiré de la commande
+
+                    _ = this.context.ShippingOrderProducts.Remove(sopModif.ShippingOrderProduct);
+
+                    // mettre à jour la quantité en stock du produit
+                    sopModif.ShippingOrderProduct.Product.qteStock += sopModif.ShippingOrderProduct.Quantity;
                     break;
             }
         }
