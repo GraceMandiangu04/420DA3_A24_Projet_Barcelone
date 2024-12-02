@@ -132,7 +132,7 @@ internal class ShippingOrderService {
     /// </summary>
     /// <param name="order"></param>
     /// <param name="modifications"></param>
-    public void CancelOrderChanges(ShippingOrder order, List<ShippingOrderProductModification> modifications) {
+    public void CancelOrderChanges(ShippingOrder order, List<ShippingOrderProductModification> modifications, Adresse? createdAddress = null) {
 
         foreach (ShippingOrderProductModification modification in modifications) {
             switch (modification.ModificationType) {
@@ -146,6 +146,11 @@ internal class ShippingOrderService {
                     order.ShippingOrderProducts.Add(modification.ShippingOrderProduct);
                     break;
             }
+        }
+        if (createdAddress != null) {
+            // TODO @PROF: voir comment gérer la suppression de l'adresse créée
+            // Une fois le service complété. Normalement, ne devrait pas supprimer par Id...
+            this.parentApp.AdresseService.Delete(createdAddress.AdresseId);
         }
     }
 
@@ -196,12 +201,13 @@ internal class ShippingOrderService {
 
                     // mettre à jour la quantité en stock du produit
                     sopModif.ShippingOrderProduct.Product.qteStock -= sopModif.ShippingOrderProduct.Quantity;
+                    _ = this.context.Produits.Update(sopModif.ShippingOrderProduct.Product);
 
                     // Créer un ordre de restockage si la qté en stock est < 50% de la qté désirée
                     if (sopModif.ShippingOrderProduct.Product.qteStock < sopModif.ShippingOrderProduct.Product.qteStockVise * 0.5) {
                         int quantity = sopModif.ShippingOrderProduct.Product.qteStockVise - sopModif.ShippingOrderProduct.Product.qteStock;
                         PurchaseOrder newPO = new PurchaseOrder(sopModif.ShippingOrderProduct.Product.Id, order.SourceClient.EntrepotId, quantity);
-                        _ = parentApp.PurchaseOrderService.CreatePO(newPO);
+                        _ = this.context.PurchaseOrders.Add(newPO);
                     }
                     break;
                 case ShippingOrderProductModificationTypeEnum.Modification:
@@ -217,7 +223,7 @@ internal class ShippingOrderService {
                         if (sopModif.ShippingOrderProduct.Product.qteStock < sopModif.ShippingOrderProduct.Product.qteStockVise * 0.5) {
                             int quantity = sopModif.ShippingOrderProduct.Product.qteStockVise - sopModif.ShippingOrderProduct.Product.qteStock;
                             PurchaseOrder newPO = new PurchaseOrder(sopModif.ShippingOrderProduct.Product.Id, order.SourceClient.EntrepotId, quantity);
-                            _ = parentApp.PurchaseOrderService.CreatePO(newPO);
+                            _ = this.context.PurchaseOrders.Add(newPO);
                         }
                     } else {
                         // quantité diminuée (ou égale)

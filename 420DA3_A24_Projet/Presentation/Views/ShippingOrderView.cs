@@ -10,6 +10,7 @@ internal partial class ShippingOrderView : Form {
     private WsysApplication parentApp;
     private bool isInitialized = false;
     private List<ShippingOrderProductModification> modifications = new List<ShippingOrderProductModification>();
+    private bool hasCreatedAnAddress = false;
 
     public ViewActionsEnum CurrentAction { get; private set; }
     public ShippingOrder CurrentEntityInstance { get; private set; } = null!;
@@ -71,6 +72,8 @@ internal partial class ShippingOrderView : Form {
         this.Initialize();
         // clear the modifications list
         this.modifications.Clear();
+        // reset the address creation flag
+        this.hasCreatedAnAddress = false;
         // remember what the current action is
         this.CurrentAction = action;
         // remember which instance we are currently working with
@@ -172,10 +175,6 @@ internal partial class ShippingOrderView : Form {
         order.SourceClient = sourceClient is null
             ? throw new Exception("Veuillez sélectionner un client source.")
             : sourceClient;
-
-        // TODO @PROF: vérifier la possibilité de faire créer les entités-pivot en même
-        // temps que l'ordre d'expédition initial => possible Ids manquants
-
         return order;
     }
 
@@ -185,8 +184,11 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void ButtonCreateAddress_Click(object sender, EventArgs e) {
+        _ = MessageBox.Show("Fonctionnalité pas encore implémentée");
         // TODO @PROF: compléter quand les services requis seront ajoutés
-        _ = MessageBox.Show("Fonctionnalité pas encore implémentée (service manquant)");
+        // pas de fonctionnalité pour faire ouvrir la fenêtre de création d'adresse créée a date
+        // this.parentApp.AdresseService.
+        // this.hasCreatedAnAddress = true;
     }
 
     private void ProductSearchTextBox_TextChanged(object sender, EventArgs e) {
@@ -207,13 +209,36 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void ButtonAddProduct_Click(object sender, EventArgs e) {
-        Produit? selectedProduct = this.productSearchResultsListBox.SelectedItem as Produit;
-        int quantity = (int) this.productAddQuantityValue.Value;
-        if (selectedProduct is not null && quantity > 0) {
-            ShippingOrderProduct newProductAssociation = new ShippingOrderProduct(selectedProduct.Id, quantity);
-            this.CurrentEntityInstance.ShippingOrderProducts.Add(newProductAssociation);
-            this.modifications.Add(new ShippingOrderProductModification(newProductAssociation, ShippingOrderProductModificationTypeEnum.Addition));
-            this.ReloadOrderProductsListBox(this.CurrentEntityInstance);
+        try {
+
+            // TODO @PROF: logiquement, ces opérations devraient être dans la couche métier
+            // pas dans la couche de présentation. Déplacer si le temps le permet.
+            Produit? selectedProduct = this.productSearchResultsListBox.SelectedItem as Produit;
+            int quantity = (int) this.productAddQuantityValue.Value;
+            if (selectedProduct is not null && quantity > 0) {
+                ShippingOrderProduct newProductAssociation = new ShippingOrderProduct(selectedProduct.Id, quantity);
+                this.CurrentEntityInstance.ShippingOrderProducts.Add(newProductAssociation);
+
+                ShippingOrderProductModification? existingModification =
+                    this.modifications.Find(mod => mod.ShippingOrderProduct == newProductAssociation);
+                if (existingModification is not null) {
+                    existingModification.OriginalQuantity = 0;
+                    existingModification.NewQuantity = quantity;
+                    existingModification.ModificationType = ShippingOrderProductModificationTypeEnum.Addition;
+
+                } else {
+                    this.modifications.Add(
+                        new ShippingOrderProductModification(
+                            newProductAssociation,
+                            ShippingOrderProductModificationTypeEnum.Addition
+                        )
+                    );
+                }
+                this.ReloadOrderProductsListBox(this.CurrentEntityInstance);
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
     }
 
@@ -230,56 +255,139 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void ButtonRemove_Click(object sender, EventArgs e) {
-        ShippingOrderProduct? selectedShippingOrderProduct = this.orderProductsList.SelectedItem as ShippingOrderProduct;
-        if (selectedShippingOrderProduct is not null) {
-            _ = this.CurrentEntityInstance.ShippingOrderProducts.Remove(selectedShippingOrderProduct);
-            this.modifications.Add(new ShippingOrderProductModification(selectedShippingOrderProduct, ShippingOrderProductModificationTypeEnum.Removal));
-            this.ReloadOrderProductsListBox(this.CurrentEntityInstance);
+        try {
+
+            // TODO @PROF: logiquement, ces opérations devraient être dans la couche métier
+            // pas dans la couche de présentation. Déplacer si le temps le permet.
+            ShippingOrderProduct? selectedShippingOrderProduct = this.orderProductsList.SelectedItem as ShippingOrderProduct;
+            if (selectedShippingOrderProduct is not null) {
+                _ = this.CurrentEntityInstance.ShippingOrderProducts.Remove(selectedShippingOrderProduct);
+
+                ShippingOrderProductModification? existingModification =
+                    this.modifications.Find(mod => mod.ShippingOrderProduct == selectedShippingOrderProduct);
+                if (existingModification is not null) {
+                    existingModification.OriginalQuantity = selectedShippingOrderProduct.Quantity;
+                    existingModification.NewQuantity = 0;
+                    existingModification.ModificationType = ShippingOrderProductModificationTypeEnum.Removal;
+                } else {
+                    this.modifications.Add(new ShippingOrderProductModification(selectedShippingOrderProduct, ShippingOrderProductModificationTypeEnum.Removal));
+                }
+                this.ReloadOrderProductsListBox(this.CurrentEntityInstance);
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
     }
 
     private void ProductChangeQuantityValue_ValueChanged(object sender, EventArgs e) {
-        ShippingOrderProduct? selectedShippingOrderProduct = this.orderProductsList.SelectedItem as ShippingOrderProduct;
-        int newQuantity = (int) this.productChangeQuantityValue.Value;
-        if (selectedShippingOrderProduct is not null) {
-            ShippingOrderProductModification? existingModification = this.modifications.Find(mod => mod.ShippingOrderProduct == selectedShippingOrderProduct);
-            if (existingModification is null) {
-                ShippingOrderProductModification modification = new ShippingOrderProductModification(selectedShippingOrderProduct, ShippingOrderProductModificationTypeEnum.Modification);
-                modification.OriginalQuantity = selectedShippingOrderProduct.Quantity;
-                modification.NewQuantity = newQuantity;
-                this.modifications.Add(modification);
+        try {
 
-            } else {
-                existingModification.NewQuantity = newQuantity;
+            // TODO @PROF: logiquement, ces opérations devraient être dans la couche métier
+            // pas dans la couche de présentation. Déplacer si le temps le permet.
+            ShippingOrderProduct? selectedShippingOrderProduct =
+                this.orderProductsList.SelectedItem as ShippingOrderProduct;
+
+            int newQuantity = (int) this.productChangeQuantityValue.Value;
+
+            if (selectedShippingOrderProduct is not null) {
+
+                ShippingOrderProductModification? existingModification =
+                    this.modifications.Find(mod => mod.ShippingOrderProduct == selectedShippingOrderProduct);
+
+                if (existingModification is null) {
+
+                    ShippingOrderProductModification modification =
+                        new ShippingOrderProductModification(
+                            selectedShippingOrderProduct,
+                            ShippingOrderProductModificationTypeEnum.Modification
+                            );
+
+                    modification.OriginalQuantity = selectedShippingOrderProduct.Quantity;
+                    modification.NewQuantity = newQuantity;
+                    this.modifications.Add(modification);
+
+                } else {
+                    switch (existingModification.ModificationType) {
+                        case ShippingOrderProductModificationTypeEnum.Addition:
+                        case ShippingOrderProductModificationTypeEnum.Modification:
+                            existingModification.NewQuantity = newQuantity;
+                            // NOTE: do not replace the old quantity here since we are simply modyfying
+                            // a modification. The original quantity is still the same.
+                            break;
+                        case ShippingOrderProductModificationTypeEnum.Removal:
+                            // this should not happen. If modification is removal, the product should not be selectable
+                            // in the list to allow its quantity to be changed... Yet, just to play safe:
+                            throw new InvalidOperationException("Cannot change quantity of a product that is being removed.");
+                        default:
+                            throw new InvalidOperationException("Unknown modification type.");
+                    }
+                    existingModification.NewQuantity = newQuantity;
+                }
+                selectedShippingOrderProduct.Quantity = newQuantity;
+                // TODO @PROF: check mise à jour de l'affichage de la quantité dans la liste
+                this.orderProductsList.Refresh();
             }
-            selectedShippingOrderProduct.Quantity = newQuantity;
-            // TODO @PROF: check mist à jour de l'Affichage de la quantité dans la liste
-            this.orderProductsList.Refresh();
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
     }
 
     private void BtnCancel_Click(object sender, EventArgs e) {
-        this.parentApp.ShippingOrderService.CancelOrderChanges(this.CurrentEntityInstance, this.modifications);
-        this.DialogResult = DialogResult.Cancel;
+        try {
+            if (this.hasCreatedAnAddress) {
+                // undo the address creation and any order modifications
+                this.parentApp.ShippingOrderService.CancelOrderChanges(this.CurrentEntityInstance, this.modifications, this.CurrentEntityInstance.DestinationAddress);
+            } else {
+                // undo the order modifications (but no address was created)
+                this.parentApp.ShippingOrderService.CancelOrderChanges(this.CurrentEntityInstance, this.modifications);
+            }
+            this.DialogResult = DialogResult.Cancel;
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     private void BtnAction_Click(object sender, EventArgs e) {
         try {
             switch (this.CurrentAction) {
                 case ViewActionsEnum.Creation:
+                    this.DoCreateAction();
                     break;
                 case ViewActionsEnum.Edition:
+                    this.DoEditionAction();
                     break;
                 case ViewActionsEnum.Deletion:
+                    this.DoDeletionAction();
                     break;
                 case ViewActionsEnum.Visualization:
                 default:
+                    // nothing here
                     break;
             }
+            this.DialogResult = DialogResult.OK;
 
         } catch (Exception ex) {
             this.parentApp.HandleException(ex);
         }
-        this.DialogResult = DialogResult.OK;
     }
+
+    private void DoCreateAction() {
+        this.CurrentEntityInstance = this.GetDataFromControls(this.CurrentEntityInstance);
+        this.CurrentEntityInstance = this.parentApp.ShippingOrderService.CreateOrder(this.CurrentEntityInstance);
+    }
+
+    private void DoEditionAction() {
+        // NOTE: on ne devrait pas pouvoir changer le client d'un ordre d'expédition
+        // une fois qu'il est créé. C'est pourquoi on ne récupère pas les données du client.
+        this.CurrentEntityInstance = this.parentApp.ShippingOrderService.UpdateOrder(this.CurrentEntityInstance, this.modifications);
+    }
+
+    private void DoDeletionAction() {
+        this.CurrentEntityInstance = this.parentApp.ShippingOrderService.DeleteOrder(this.CurrentEntityInstance);
+    }
+
+
 }
