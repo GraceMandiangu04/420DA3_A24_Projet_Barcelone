@@ -25,6 +25,9 @@ internal class WsysApplication {
     public PurchaseOrderService PurchaseOrderService { get; private set; }
     public AdresseService AdresseService { get; private set; }
     public ExpeditionService ExpeditionService { get; private set; }
+    public ClientService ClientService { get; private set; }
+    public FournisseurService FournisseurService { get; private set; }
+
 
 
     // TODO: @ÉQUIPE ajoutez des propriétés pour vos services ici
@@ -44,7 +47,8 @@ internal class WsysApplication {
         this.PurchaseOrderService = new PurchaseOrderService(this, this.context);
         this.AdresseService = new AdresseService(this, this.context);
         this.ExpeditionService = new ExpeditionService(this, this.context);
-
+        this.ClientService = new ClientService(this.context);
+        this.FournisseurService = new FournisseurService(this.context);
         // TODO: @ÉQUIPE ajoutez la création de vos services ici
 
 
