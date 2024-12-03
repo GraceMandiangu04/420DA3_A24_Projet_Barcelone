@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace _420DA3_A24_Projet.Business.Domain;
 internal class Entrepot {
+    internal object Clients;
 
     //Identifiant
     public int id { get; set; }
