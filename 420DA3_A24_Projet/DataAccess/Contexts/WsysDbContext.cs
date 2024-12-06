@@ -219,9 +219,9 @@ internal class WsysDbContext : DbContext {
            .Property(Entrepot => Entrepot.DateCreated)
            .HasColumnName("DateCreated")
            .HasColumnOrder(3)
-           .HasColumnType("datetime2(5)") 
-           .HasPrecision(5) 
-           .HasDefaultValueSql("GETUTCDATE()") 
+           .HasColumnType("datetime2(5)")
+           .HasPrecision(5)
+           .HasDefaultValueSql("GETUTCDATE()")
            .IsRequired(true);
 
         _ = modelBuilder.Entity<Entrepot>()
@@ -230,7 +230,7 @@ internal class WsysDbContext : DbContext {
             .HasColumnOrder(4)
             .HasColumnType("datetime2(5)")
             .HasPrecision(5)
-            .IsRequired(false); 
+            .IsRequired(false);
 
         _ = modelBuilder.Entity<Entrepot>()
             .Property(Entrepot => Entrepot.DateDeleted)
@@ -241,7 +241,7 @@ internal class WsysDbContext : DbContext {
             .IsRequired(false);
 
         _ = modelBuilder.Entity<Entrepot>()
-            .Property( Entrepot => Entrepot.RowVersion)
+            .Property(Entrepot => Entrepot.RowVersion)
             .HasColumnOrder(6)
             .HasColumnName("RowVersion")
             .IsRowVersion();
@@ -276,7 +276,7 @@ internal class WsysDbContext : DbContext {
            .IsRequired(true);
 
         _ = modelBuilder.Entity<Produit>()
-           .Property(Produit=> Produit.codeUpcinternational)
+           .Property(Produit => Produit.codeUpcinternational)
            .HasColumnName("codeUpcinternational")
            .HasColumnOrder(3)
            .HasColumnType($"nVarchar")
@@ -558,7 +558,22 @@ internal class WsysDbContext : DbContext {
             .HasColumnOrder(9)
             .IsRowVersion();
 
-        // TODO: @PROF Faire config des relations de PurchaseOrder
+
+
+        _ = modelBuilder.Entity<PurchaseOrder>()
+            .HasOne(po => po.OrderedProduct)
+            .WithMany(produit => produit.ProductPurchaseOrders)
+            .HasForeignKey(po => po.OrderedProductId)
+            .HasPrincipalKey(produit => produit.Id)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        _ = modelBuilder.Entity<PurchaseOrder>()
+            .HasOne(po => po.DestinationWarehouse)
+            .WithMany(wh => wh.OrdresRestockage)
+            .HasForeignKey(po => po.DestinationWarehouseId)
+            .HasPrincipalKey(wh => wh.id)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         #endregion
 
