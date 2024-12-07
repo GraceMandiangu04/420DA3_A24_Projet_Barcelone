@@ -417,7 +417,7 @@ partial class ShippingOrderView {
         this.dateShippedLabel.Name = "dateShippedLabel";
         this.dateShippedLabel.Size = new Size(144, 23);
         this.dateShippedLabel.TabIndex = 34;
-        this.dateShippedLabel.Text = "Date de création :";
+        this.dateShippedLabel.Text = "Date d'expédition :";
         this.dateShippedLabel.TextAlign = ContentAlignment.MiddleRight;
         // 
         // dateDeletedValue
@@ -481,7 +481,7 @@ partial class ShippingOrderView {
         this.fulfillerEmployeeLabel.Name = "fulfillerEmployeeLabel";
         this.fulfillerEmployeeLabel.Size = new Size(144, 23);
         this.fulfillerEmployeeLabel.TabIndex = 27;
-        this.fulfillerEmployeeLabel.Text = "Employé créateur :";
+        this.fulfillerEmployeeLabel.Text = "Employé compléteur :";
         this.fulfillerEmployeeLabel.TextAlign = ContentAlignment.MiddleRight;
         // 
         // fulfillerEmployeeValue
