@@ -103,7 +103,7 @@ public class ShippingOrder {
     /// <param name="warehouseEmployee">L'employé d'entrepôt à assigner.</param>
     /// <exception cref="InvalidOperationException">Si le statut de l'ordre d'expédition n'est pas "Unassigned".</exception>
     /// <exception cref="ArgumentException">Si l'utilisateur reçu n'est pas un employé d'entrepôt.</exception>
-    public void AssignToWarehouseEmployee(User warehouseEmployee) {
+    public void AssignToFulfillerEmployee(User warehouseEmployee) {
         if (this.Status != ShippingOrderStatusEnum.Unassigned) {
             throw new InvalidOperationException("Shipping order must be in Unassigned status to be assigned to a warehouse employee.");
         }
