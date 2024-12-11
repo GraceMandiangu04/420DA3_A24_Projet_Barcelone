@@ -2,6 +2,7 @@
 using _420DA3_A24_Projet.DataAccess.Contexts;
 using _420DA3_A24_Projet.DataAccess.DAOs;
 using _420DA3_A24_Projet.Presentation.Views;
+using System.Runtime.Serialization;
 
 namespace _420DA3_A24_Projet.Business.Services;
 
@@ -23,6 +24,49 @@ internal class RoleService {
         this.parentApp = parentApp;
         this.dao = new RoleDAO(context);
         this.view = new RoleView(parentApp);
+    }
+
+
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <returns></returns>
+    public Role? OpenRoleManagementWindowForCreation() {
+        Role newRole = (Role) FormatterServices.GetUninitializedObject(typeof(Role));
+        DialogResult result = this.view.OpenForCreation(newRole);
+        return result == DialogResult.OK
+            ? this.view.CurrentEntityInstance
+            : null;
+    }
+
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="instance"></param>
+    /// <returns></returns>
+    public Role OpenRoleManagementWindowForEdition(Role instance) {
+        _ = this.view.OpenForModification(instance);
+        return instance;
+    }
+
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="instance"></param>
+    /// <returns></returns>
+    public Role OpenRoleManagementWindowForVisualization(Role instance) {
+        _ = this.view.OpenForDetailsView(instance);
+        return instance;
+    }
+
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="instance"></param>
+    /// <returns></returns>
+    public bool OpenRoleManagementWindowForDeletion(Role instance) {
+        DialogResult result = this.view.OpenForDeletion(instance);
+        return result == DialogResult.OK;
     }
 
     /// <summary>
