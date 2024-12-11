@@ -2,6 +2,7 @@
 using _420DA3_A24_Projet.DataAccess.Contexts;
 using _420DA3_A24_Projet.DataAccess.DAOs;
 using _420DA3_A24_Projet.Presentation.Views;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Runtime.Serialization;
 
 namespace _420DA3_A24_Projet.Business.Services;
@@ -34,11 +35,16 @@ internal class UserService {
     /// </summary>
     /// <returns></returns>
     public User? OpenUserManagementWindowForCreation() {
-        User newEmptyUser = (User) FormatterServices.GetUninitializedObject(typeof(User));
-        DialogResult result = this.userWindow.OpenForCreation(newEmptyUser);
-        return result == DialogResult.OK
-            ? this.userWindow.CurrentEntityInstance
-            : null;
+        try {
+            User newEmptyUser = (User) FormatterServices.GetUninitializedObject(typeof(User));
+            DialogResult result = this.userWindow.OpenForCreation(newEmptyUser);
+            return result == DialogResult.OK
+                ? this.userWindow.CurrentEntityInstance
+                : null;
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to open the user management window in user creation mode.", ex);
+        }
     }
 
     /// <summary>
@@ -47,8 +53,13 @@ internal class UserService {
     /// <param name="userToEdit"></param>
     /// <returns></returns>
     public User OpenUserManagementWindowForEdition(User userToEdit) {
-        _ = this.userWindow.OpenForModification(userToEdit);
-        return userToEdit;
+        try {
+            _ = this.userWindow.OpenForModification(userToEdit);
+            return userToEdit;
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to open the user management window in user edition mode.", ex);
+        }
     }
 
     /// <summary>
@@ -57,8 +68,13 @@ internal class UserService {
     /// <param name="userToView"></param>
     /// <returns></returns>
     public User OpenUserManagementWindowForVisualization(User userToView) {
-        _ = this.userWindow.OpenForDetailsView(userToView);
-        return userToView;
+        try {
+            _ = this.userWindow.OpenForDetailsView(userToView);
+            return userToView;
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to open the user management window in user visualization mode.", ex);
+        }
     }
 
     /// <summary>
@@ -67,8 +83,13 @@ internal class UserService {
     /// <param name="userToDelete"></param>
     /// <returns></returns>
     public bool OpenUserManagementWindowForDeletion(User userToDelete) {
-        DialogResult result = this.userWindow.OpenForDeletion(userToDelete);
-        return result == DialogResult.OK;
+        try {
+            DialogResult result = this.userWindow.OpenForDeletion(userToDelete);
+            return result == DialogResult.OK;
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to open the user management window in user deletion mode.", ex);
+        }
     }
 
 
@@ -79,7 +100,12 @@ internal class UserService {
     /// <param name="id"></param>
     /// <returns></returns>
     public User? GetUserById(int id) {
-        return this.userDAO.GetById(id);
+        try {
+            return this.userDAO.GetById(id);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to retrieve a user by its ID.", ex);
+        }
     }
 
     /// <summary>
@@ -88,7 +114,12 @@ internal class UserService {
     /// <param name="username"></param>
     /// <returns></returns>
     public User? GetUserByUsername(string username) {
-        return this.userDAO.GetByUsername(username);
+        try {
+            return this.userDAO.GetByUsername(username);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to retrieve a user by its username.", ex);
+        }
     }
 
     /// <summary>
@@ -97,7 +128,12 @@ internal class UserService {
     /// <param name="criterion"></param>
     /// <returns></returns>
     public List<User> SearchUsers(string criterion) {
-        return this.userDAO.Search(criterion);
+        try {
+            return this.userDAO.Search(criterion);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to search users.", ex);
+        }
     }
 
     /// <summary>
@@ -106,7 +142,12 @@ internal class UserService {
     /// <param name="user"></param>
     /// <returns></returns>
     public User CreateUserInDatabase(User user) {
-        return this.userDAO.Create(user);
+        try {
+            return this.userDAO.Create(user);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to insert a new user in the database.", ex);
+        }
     }
 
     /// <summary>
@@ -115,7 +156,12 @@ internal class UserService {
     /// <param name="user"></param>
     /// <returns></returns>
     public User UpdateUserInDatabase(User user) {
-        return this.userDAO.Update(user);
+        try {
+            return this.userDAO.Update(user);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to update a new user in the database.", ex);
+        }
     }
 
     /// <summary>
@@ -124,7 +170,12 @@ internal class UserService {
     /// <param name="user"></param>
     /// <returns></returns>
     public User DeleteUserFromDatabase(User user) {
-        return this.userDAO.Delete(user);
+        try {
+            return this.userDAO.Delete(user);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to delete a new user in the database.", ex);
+        }
     }
 
     #endregion
