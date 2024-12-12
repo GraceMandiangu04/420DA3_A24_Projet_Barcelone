@@ -12,9 +12,8 @@ namespace _420DA3_A24_Projet.Business.Services;
 /// </summary>
 internal class UserService {
 
-    private WsysApplication parentApp;
-    private UserDAO userDAO;
-    private UserView userWindow;
+    private readonly UserDAO userDAO;
+    private readonly UserView userWindow;
 
     /// <summary>
     /// TODO @PROF : documenter
@@ -22,7 +21,6 @@ internal class UserService {
     /// <param name="parentApp"></param>
     /// <param name="context"></param>
     public UserService(WsysApplication parentApp, WsysDbContext context) {
-        this.parentApp = parentApp;
         this.userDAO = new UserDAO(context);
         this.userWindow = new UserView(parentApp);
     }

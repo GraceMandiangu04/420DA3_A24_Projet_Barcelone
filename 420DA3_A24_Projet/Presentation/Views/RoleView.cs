@@ -10,7 +10,7 @@ namespace _420DA3_A24_Projet.Presentation.Views;
 /// </summary>
 internal partial class RoleView : Form {
 
-    private WsysApplication parentApp;
+    private readonly WsysApplication parentApp;
 
     /// <summary>
     /// TODO @PROF : documenter
@@ -121,40 +121,51 @@ internal partial class RoleView : Form {
     /// TODO @PROF : documenter
     /// </summary>
     /// <param name="role"></param>
-    private void LoadDataInControls(Role role) {
+    /// <returns></returns>
+    private Role LoadDataInControls(Role role) {
         this.idValue.Text = role.Id.ToString();
         this.nameValue.Text = role.Name;
         this.descriptionValue.Text = role.Description;
         this.dateCreatedValue.Text = role.DateCreated.ToString();
+        return role;
     }
 
     /// <summary>
     /// TODO @PROF : documenter
     /// </summary>
     /// <param name="role"></param>
-    private void SaveDataFromControls(Role role) {
+    /// <returns></returns>
+    private Role SaveDataFromControls(Role role) {
         role.Name = this.nameValue.Text.Trim();
         role.Description = this.descriptionValue.Text.Trim();
+        return role;
     }
 
     private void ActionButton_Click(object sender, EventArgs e) {
-        switch (this.CurrentAction) {
-            case ViewActionsEnum.Creation:
-                this.SaveDataFromControls(this.CurrentEntityInstance);
-                this.CurrentEntityInstance = this.parentApp.RoleService.CreateRole(this.CurrentEntityInstance);
-                break;
-            case ViewActionsEnum.Edition:
-                this.SaveDataFromControls(this.CurrentEntityInstance);
-                this.CurrentEntityInstance = this.parentApp.RoleService.UpdateRole(this.CurrentEntityInstance);
-                break;
-            case ViewActionsEnum.Deletion:
-                this.CurrentEntityInstance = this.parentApp.RoleService.DeleteRole(this.CurrentEntityInstance);
-                break;
-            case ViewActionsEnum.Visualization:
-                // nothing to do
-                break;
-            default:
-                throw new NotImplementedException($"The view action [{Enum.GetName(this.CurrentAction)}] is not implemented in [{this.GetType().ShortDisplayName}].");
+        try {
+
+            switch (this.CurrentAction) {
+                case ViewActionsEnum.Creation:
+                    _ = this.SaveDataFromControls(this.CurrentEntityInstance);
+                    this.CurrentEntityInstance = this.parentApp.RoleService.CreateRole(this.CurrentEntityInstance);
+                    break;
+                case ViewActionsEnum.Edition:
+                    _ = this.SaveDataFromControls(this.CurrentEntityInstance);
+                    this.CurrentEntityInstance = this.parentApp.RoleService.UpdateRole(this.CurrentEntityInstance);
+                    break;
+                case ViewActionsEnum.Deletion:
+                    this.CurrentEntityInstance = this.parentApp.RoleService.DeleteRole(this.CurrentEntityInstance);
+                    break;
+                case ViewActionsEnum.Visualization:
+                    // nothing to do
+                    break;
+                default:
+                    throw new NotImplementedException($"The view action [{Enum.GetName(this.CurrentAction)}] is not implemented in [{this.GetType().ShortDisplayName}].");
+            }
+            this.DialogResult = DialogResult.OK;
+
+        } catch (Exception ex) { 
+            this.parentApp.HandleException(ex);
         }
     }
 

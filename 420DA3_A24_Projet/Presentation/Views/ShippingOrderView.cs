@@ -5,16 +5,30 @@ using _420DA3_A24_Projet.Business.Domain.Utils;
 using Project_Utilities.Enums;
 
 namespace _420DA3_A24_Projet.Presentation.Views;
+
+/// <summary>
+/// TODO @PROF : documenter
+/// </summary>
 internal partial class ShippingOrderView : Form {
 
-    private WsysApplication parentApp;
+    private readonly WsysApplication parentApp;
     private bool isInitialized = false;
-    private List<ShippingOrderProductModification> modifications = new List<ShippingOrderProductModification>();
+    private readonly List<ShippingOrderProductModification> modifications = new List<ShippingOrderProductModification>();
     private bool hasCreatedAnAddress = false;
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     public ViewActionsEnum CurrentAction { get; private set; }
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     public ShippingOrder CurrentEntityInstance { get; private set; } = null!;
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="application"></param>
     public ShippingOrderView(WsysApplication application) {
         this.parentApp = application;
         this.InitializeComponent();
@@ -96,18 +110,27 @@ internal partial class ShippingOrderView : Form {
         }
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void Initialize() {
         if (!this.isInitialized) {
-            this.ReloadStatusComboBox();
+            this.ReloadSelectors();
             this.isInitialized = true;
         }
     }
 
-    private void ReloadStatusComboBox() {
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    private void ReloadSelectors() {
         this.statusValue.Items.Clear();
         this.statusValue.Items.AddRange(Enum.GetNames(typeof(ShippingOrderStatusEnum)));
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void ActivateControlsForCreation() {
         this.searchClientsTextBox.Enabled = true;
         this.sourceClientValue.Enabled = true;
@@ -117,6 +140,9 @@ internal partial class ShippingOrderView : Form {
         this.orderProductsList.Enabled = true;
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void ActivateControlsForEdition() {
         this.searchClientsTextBox.Enabled = false;
         this.sourceClientValue.Enabled = false;
@@ -126,6 +152,9 @@ internal partial class ShippingOrderView : Form {
         this.orderProductsList.Enabled = true;
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void DeactivateControls() {
         this.searchClientsTextBox.Enabled = false;
         this.sourceClientValue.Enabled = false;
@@ -135,6 +164,11 @@ internal partial class ShippingOrderView : Form {
         this.orderProductsList.Enabled = false;
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
     private ShippingOrder LoadDataInControls(ShippingOrder order) {
         this.idValue.Value = order.Id;
         this.statusValue.SelectedItem = Enum.GetName(order.Status);
@@ -161,6 +195,10 @@ internal partial class ShippingOrderView : Form {
         return order;
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="order"></param>
     private void ReloadOrderProductsListBox(ShippingOrder order) {
         this.orderProductsList.Items.Clear();
         this.orderProductsList.SelectedItem = null;
@@ -170,35 +208,71 @@ internal partial class ShippingOrderView : Form {
         }
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     private ShippingOrder GetDataFromControls(ShippingOrder order) {
-        Client? sourceClient = this.sourceClientValue.SelectedItem as Client;
-        order.SourceClient = sourceClient is null
-            ? throw new Exception("Veuillez sélectionner un client source.")
-            : sourceClient;
+        Client? sourceClient = this.sourceClientValue.SelectedItem as Client 
+            ?? throw new Exception("Please select a source client for the shipping order.");
+        order.SourceClient = sourceClient;
         return order;
     }
 
     private void SearchClientsTextBox_TextChanged(object sender, EventArgs e) {
-        // TODO @PROF: compléter quand les services requis seront ajoutés
-        _ = MessageBox.Show("Fonctionnalité pas encore implémentée (service manquant)");
+        try {
+            // TODO @PROF: compléter quand la fonctionnalité requise sera ajoutée
+            List<Client> clients = this.parentApp.ClientService.Search(this.searchClientsTextBox.Text.Trim());
+            this.sourceClientValue.Items.Clear();
+            foreach (Client client in clients) {
+                _ = this.sourceClientValue.Items.Add(client);
+            }
+            if (this.CurrentEntityInstance.SourceClient is not null 
+                && this.sourceClientValue.Items.Contains(this.CurrentEntityInstance.SourceClient)) {
+                this.sourceClientValue.SelectedItem = this.CurrentEntityInstance.SourceClient;
+            }
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     private void ButtonCreateAddress_Click(object sender, EventArgs e) {
-        _ = MessageBox.Show("Fonctionnalité pas encore implémentée");
-        // TODO @PROF: compléter quand les services requis seront ajoutés
-        // pas de fonctionnalité pour faire ouvrir la fenêtre de création d'adresse créée a date
-        // this.parentApp.AdresseService.
-        // this.hasCreatedAnAddress = true;
+        try {
+            // TODO @PROF: compléter quand la fonctionnalité requise sera ajoutée
+            Adresse? addresse = this.parentApp.AdresseService.OpenAddressViewForCreation();
+            if (addresse != null) {
+                this.CurrentEntityInstance.DestinationAddress = addresse;
+                this.addressDisplayTextBox.Text = addresse.ToString();
+                this.hasCreatedAnAddress = true;
+            }
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     private void ProductSearchTextBox_TextChanged(object sender, EventArgs e) {
-        // TODO @PROF: compléter quand les services requis seront ajoutés
-        _ = MessageBox.Show("Fonctionnalité pas encore implémentée (service manquant)");
+        try {
+            // TODO @PROF: compléter quand la fonctionnalité requise sera ajoutée
+            List<Produit> results = this.parentApp.ProduitService.Search(this.productSearchTextBox.Text.Trim());
+            this.productSearchResultsListBox.Items.Clear();
+            foreach (Produit produit in results) {
+                if (!this.CurrentEntityInstance.ShippingOrderProducts.Any(sop => { 
+                    return sop.Product == produit; 
+                })) {
+                    // if the product is not already added to the shipping order as a ShippingOrderProduct,
+                    // add it to the search results list. If it is, do not add it to the list (user can modify)
+                    _ = this.productSearchResultsListBox.Items.Add(produit);
+                }
+            }
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     private void ProductSearchResultsListBox_SelectedIndexChanged(object sender, EventArgs e) {
-        Produit? selectedProduct = this.productSearchResultsListBox.SelectedItem as Produit;
-        if (selectedProduct is null) {
+        if (this.productSearchResultsListBox.SelectedItem is not Produit selectedProduct) {
             this.productAddQuantityValue.Enabled = false;
             this.buttonAddProduct.Enabled = false;
         } else {
@@ -220,7 +294,9 @@ internal partial class ShippingOrderView : Form {
                 this.CurrentEntityInstance.ShippingOrderProducts.Add(newProductAssociation);
 
                 ShippingOrderProductModification? existingModification =
-                    this.modifications.Find(mod => mod.ShippingOrderProduct == newProductAssociation);
+                    this.modifications.Find(mod => {
+                        return mod.ShippingOrderProduct == newProductAssociation;
+                    });
                 if (existingModification is not null) {
                     existingModification.OriginalQuantity = 0;
                     existingModification.NewQuantity = quantity;
@@ -243,8 +319,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     private void OrderProductsList_SelectedIndexChanged(object sender, EventArgs e) {
-        ShippingOrderProduct? selectedShippingOrderProduct = this.orderProductsList.SelectedItem as ShippingOrderProduct;
-        if (selectedShippingOrderProduct is null) {
+        if (this.orderProductsList.SelectedItem is not ShippingOrderProduct selectedShippingOrderProduct) {
             this.productChangeQuantityValue.Enabled = false;
             this.buttonRemoveProduct.Enabled = false;
         } else {
@@ -264,7 +339,9 @@ internal partial class ShippingOrderView : Form {
                 _ = this.CurrentEntityInstance.ShippingOrderProducts.Remove(selectedShippingOrderProduct);
 
                 ShippingOrderProductModification? existingModification =
-                    this.modifications.Find(mod => mod.ShippingOrderProduct == selectedShippingOrderProduct);
+                    this.modifications.Find(mod => {
+                        return mod.ShippingOrderProduct == selectedShippingOrderProduct;
+                    });
                 if (existingModification is not null) {
                     existingModification.OriginalQuantity = selectedShippingOrderProduct.Quantity;
                     existingModification.NewQuantity = 0;
@@ -293,7 +370,9 @@ internal partial class ShippingOrderView : Form {
             if (selectedShippingOrderProduct is not null) {
 
                 ShippingOrderProductModification? existingModification =
-                    this.modifications.Find(mod => mod.ShippingOrderProduct == selectedShippingOrderProduct);
+                    this.modifications.Find(mod => {
+                        return mod.ShippingOrderProduct == selectedShippingOrderProduct;
+                    });
 
                 if (existingModification is null) {
 
@@ -301,10 +380,10 @@ internal partial class ShippingOrderView : Form {
                         new ShippingOrderProductModification(
                             selectedShippingOrderProduct,
                             ShippingOrderProductModificationTypeEnum.Modification
-                            );
-
-                    modification.OriginalQuantity = selectedShippingOrderProduct.Quantity;
-                    modification.NewQuantity = newQuantity;
+                            ) {
+                            OriginalQuantity = selectedShippingOrderProduct.Quantity,
+                            NewQuantity = newQuantity
+                        };
                     this.modifications.Add(modification);
 
                 } else {
@@ -374,17 +453,26 @@ internal partial class ShippingOrderView : Form {
         }
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void DoCreateAction() {
         this.CurrentEntityInstance = this.GetDataFromControls(this.CurrentEntityInstance);
         this.CurrentEntityInstance = this.parentApp.ShippingOrderService.CreateOrder(this.CurrentEntityInstance);
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void DoEditionAction() {
         // NOTE: on ne devrait pas pouvoir changer le client d'un ordre d'expédition
         // une fois qu'il est créé. C'est pourquoi on ne récupère pas les données du client.
         this.CurrentEntityInstance = this.parentApp.ShippingOrderService.UpdateOrder(this.CurrentEntityInstance, this.modifications);
     }
 
+    /// <summary>
+    /// TODO @PROF : documenter
+    /// </summary>
     private void DoDeletionAction() {
         this.CurrentEntityInstance = this.parentApp.ShippingOrderService.DeleteOrder(this.CurrentEntityInstance);
     }
