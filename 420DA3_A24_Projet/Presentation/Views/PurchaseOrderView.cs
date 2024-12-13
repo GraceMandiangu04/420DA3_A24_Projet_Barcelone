@@ -4,19 +4,29 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Project_Utilities.Enums;
 
 namespace _420DA3_A24_Projet.Presentation.Views;
+
+/// <summary>
+/// Management window for <see cref="PurchaseOrder"/> entities.
+/// </summary>
 internal partial class PurchaseOrderView : Form {
     private bool isInitialized = false;
     private readonly WsysApplication parentApp;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The <see cref="ViewActionsEnum"/> value indicating the intent for which the window
+    /// is currently opened or was opened last.
     /// </summary>
     public ViewActionsEnum CurrentAction { get; private set; }
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The working <see cref="PurchaseOrder"/> value with which the window is currently
+    /// opened or was opened last.
     /// </summary>
     public PurchaseOrder CurrentEntityInstance { get; private set; } = null!;
 
+    /// <summary>
+    /// <see cref="PurchaseOrderView"/> constructor.
+    /// </summary>
+    /// <param name="application"></param>
     public PurchaseOrderView(WsysApplication application) {
         this.parentApp = application;
         this.InitializeComponent();
@@ -24,7 +34,7 @@ internal partial class PurchaseOrderView : Form {
 
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="PurchaseOrderView"/> modal window in entity creation mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -34,7 +44,7 @@ internal partial class PurchaseOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="PurchaseOrderView"/> modal window in entity visualization mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -44,25 +54,29 @@ internal partial class PurchaseOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="PurchaseOrderView"/> modal window in entity edition mode.
+    /// NOTE: EDITION OF <see cref="PurchaseOrder"/> INSTANCES IS NOT ALLOWED.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public DialogResult OpenForModification(PurchaseOrder instance) {
         throw new InvalidOperationException("La modification d'ordres de restockage n'est pas autorisée.");
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="PurchaseOrderView"/> modal window in entity deletion mode.
+    /// NOTE: DELETION OF <see cref="PurchaseOrder"/> INSTANCES IS NOT ALLOWED.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public DialogResult OpenForDeletion(PurchaseOrder instance) {
         throw new InvalidOperationException("La suppression d'ordres de restockage n'est pas autorisée.");
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs pre-opening initialization, clean-up and preparation for the <see cref="PurchaseOrderView"/> window.
     /// </summary>
     /// <param name="instance"></param>
     /// <param name="action"></param>
@@ -92,7 +106,8 @@ internal partial class PurchaseOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Ensures that the selector controls of the <see cref="PurchaseOrderView"/> window
+    /// with static content have their items populated.
     /// </summary>
     private void Initialize() {
         if (!this.isInitialized) {
@@ -102,7 +117,8 @@ internal partial class PurchaseOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Fills the status and warehouse selectors of the <see cref="PurchaseOrderView"/> window with all
+    /// the existing <see cref="ShippingOrderStatusEnum"/> and <see cref="Entrepot"/> values respectively.
     /// </summary>
     private void ReloadSelectors() {
         this.statusValue.Items.Clear();
@@ -117,7 +133,8 @@ internal partial class PurchaseOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Loads the data of a given <paramref name="pOrder"/> in the <see cref="PurchaseOrderView"/>
+    /// window's controls.
     /// </summary>
     /// <param name="pOrder"></param>
     /// <returns></returns>
@@ -157,7 +174,8 @@ internal partial class PurchaseOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Takes data from the basic <see cref="PurchaseOrderView"/>'s controls and assigns
+    /// it to the given <paramref name="pOrder"/>.
     /// </summary>
     /// <param name="pOrder"></param>
     /// <returns></returns>
@@ -182,6 +200,9 @@ internal partial class PurchaseOrderView : Form {
         return pOrder;
     }
 
+    /// <summary>
+    /// Enables the <see cref="PurchaseOrderView"/> window's controls for creation and edition modes.
+    /// </summary>
     private void ActivateControls() {
         this.warehouseValue.Enabled = true;
         this.productSearch.Enabled = true;
@@ -189,6 +210,9 @@ internal partial class PurchaseOrderView : Form {
         this.quantityValue.Enabled = true;
     }
 
+    /// <summary>
+    /// Disables the <see cref="PurchaseOrderView"/> window's controls for visualization and deletion modes.
+    /// </summary>
     private void DeactivateControls() {
         this.warehouseValue.Enabled = false;
         this.productSearch.Enabled = false;

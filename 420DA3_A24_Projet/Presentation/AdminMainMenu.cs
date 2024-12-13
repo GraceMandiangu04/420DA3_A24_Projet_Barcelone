@@ -7,7 +7,7 @@ using Project_Utilities.Presentation;
 namespace _420DA3_A24_Projet.Presentation;
 
 /// <summary>
-/// TODO: documenter
+/// Main menu window for users with the administrator <see cref="Role"/>.
 /// </summary>
 internal partial class AdminMainMenu : Form {
 
@@ -20,7 +20,7 @@ internal partial class AdminMainMenu : Form {
     private readonly WsysApplication parentApp;
 
     /// <summary>
-    /// TODO: documenter
+    /// <see cref="AdminMainMenu"/> constructor.
     /// </summary>
     /// <param name="application"></param>
     public AdminMainMenu(WsysApplication application) {
@@ -29,7 +29,7 @@ internal partial class AdminMainMenu : Form {
     }
 
     /// <summary>
-    /// TODO: documenter
+    /// Opens a <see cref="AdminMainMenu"/> modal window.
     /// </summary>
     /// <returns></returns>
     public DialogResult ShowAdminMainMenu() {

@@ -6,23 +6,25 @@ using Project_Utilities.Enums;
 namespace _420DA3_A24_Projet.Presentation.Views;
 
 /// <summary>
-/// TODO @PROF : documenter
+/// Management window for <see cref="Role"/> entities.
 /// </summary>
 internal partial class RoleView : Form {
 
     private readonly WsysApplication parentApp;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The <see cref="ViewActionsEnum"/> value indicating the intent for which the window
+    /// is currently opened or was opened last.
     /// </summary>
     public ViewActionsEnum CurrentAction { get; private set; }
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The working <see cref="Role"/> value with which the window is currently
+    /// opened or was opened last.
     /// </summary>
     public Role CurrentEntityInstance { get; private set; } = null!;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// <see cref="RoleView"/> constructor.
     /// </summary>
     /// <param name="application"></param>
     public RoleView(WsysApplication application) {
@@ -34,7 +36,7 @@ internal partial class RoleView : Form {
 
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="RoleView"/> modal window in entity creation mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -44,7 +46,7 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="RoleView"/> modal window in entity visualization mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -54,7 +56,7 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="RoleView"/> modal window in entity edition mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -64,7 +66,7 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="RoleView"/> modal window in entity deletion mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -74,7 +76,7 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs pre-opening initialization, clean-up and preparation for the <see cref="RoleView"/> window.
     /// </summary>
     /// <param name="instance"></param>
     /// <param name="action"></param>
@@ -102,7 +104,7 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Enables the <see cref="RoleView"/> window's controls for creation and edition modes.
     /// </summary>
     private void ActivateControls() {
         this.nameValue.Enabled = true;
@@ -110,7 +112,7 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Disables the <see cref="RoleView"/> window's controls for visualization and deletion modes.
     /// </summary>
     private void DeactivateControls() {
         this.nameValue.Enabled = false;
@@ -118,7 +120,8 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Loads the data of a given <paramref name="role"/> in the <see cref="RoleView"/>
+    /// window's controls.
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>
@@ -131,7 +134,8 @@ internal partial class RoleView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Takes data from the basic <see cref="RoleView"/>'s controls and assigns
+    /// it to the given <paramref name="role"/>.
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>

@@ -8,7 +8,7 @@ using Project_Utilities.Presentation;
 namespace _420DA3_A24_Projet.Presentation.Views;
 
 /// <summary>
-/// TODO @PROF : documenter
+/// Management window for <see cref="ShippingOrder"/> entities.
 /// </summary>
 internal partial class ShippingOrderView : Form {
 
@@ -18,16 +18,18 @@ internal partial class ShippingOrderView : Form {
     private bool hasCreatedAnAddress = false;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The <see cref="ViewActionsEnum"/> value indicating the intent for which the window
+    /// is currently opened or was opened last.
     /// </summary>
     public ViewActionsEnum CurrentAction { get; private set; }
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The working <see cref="ShippingOrder"/> value with which the window is currently
+    /// opened or was opened last.
     /// </summary>
     public ShippingOrder CurrentEntityInstance { get; private set; } = null!;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// <see cref="ShippingOrderView"/> constructor.
     /// </summary>
     /// <param name="application"></param>
     public ShippingOrderView(WsysApplication application) {
@@ -36,7 +38,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="ShippingOrderView"/> modal window in entity creation mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -46,7 +48,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="ShippingOrderView"/> modal window in entity visualization mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -56,7 +58,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="ShippingOrderView"/> modal window in entity edition mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -66,7 +68,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="ShippingOrderView"/> modal window in entity deletion mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -76,7 +78,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs pre-opening initialization, clean-up and preparation for the <see cref="ShippingOrderView"/> window.
     /// </summary>
     /// <param name="instance"></param>
     /// <param name="action"></param>
@@ -112,7 +114,8 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Ensures that the selector controls of the <see cref="ShippingOrderView"/> window
+    /// with static content have their items populated.
     /// </summary>
     private void Initialize() {
         if (!this.isInitialized) {
@@ -122,7 +125,8 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Fills the status selector of the <see cref="ShippingOrderView"/> window with all
+    /// the existing <see cref="ShippingOrderStatusEnum"/> values.
     /// </summary>
     private void ReloadSelectors() {
         this.statusValue.Items.Clear();
@@ -130,7 +134,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Enables the <see cref="ShippingOrderView"/> window's controls for creation mode.
     /// </summary>
     private void ActivateControlsForCreation() {
         this.searchClientsTextBox.Enabled = true;
@@ -142,7 +146,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Enables the <see cref="ShippingOrderView"/> window's controls for edition mode.
     /// </summary>
     private void ActivateControlsForEdition() {
         this.searchClientsTextBox.Enabled = false;
@@ -154,7 +158,8 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Disables the <see cref="ShippingOrderView"/> window's controls for visualization
+    /// and deletion modes.
     /// </summary>
     private void DeactivateControls() {
         this.searchClientsTextBox.Enabled = false;
@@ -166,7 +171,8 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Loads the data of a given <paramref name="order"/> in the <see cref="ShippingOrderView"/>
+    /// window's controls.
     /// </summary>
     /// <param name="order"></param>
     /// <returns></returns>
@@ -197,7 +203,8 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Reloads the <see cref="ListBox"/> of <see cref="ShippingOrderProduct"/> instances 
+    /// if the <see cref="ShippingOrderView"/> for a given <paramref name="order"/>.
     /// </summary>
     /// <param name="order"></param>
     private void ReloadOrderProductsListBox(ShippingOrder order) {
@@ -210,12 +217,13 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Takes data from the basic <see cref="ShippingOrderView"/>'s controls and assigns
+    /// it to the given <paramref name="order"/>.
     /// </summary>
     /// <param name="order"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    private ShippingOrder GetDataFromControls(ShippingOrder order) {
+    private ShippingOrder SaveDataFromControls(ShippingOrder order) {
         Client? sourceClient = this.sourceClientValue.SelectedItem as Client 
             ?? throw new Exception("Please select a source client for the shipping order.");
         order.SourceClient = sourceClient;
@@ -455,15 +463,15 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs the creation actions.
     /// </summary>
     private void DoCreateAction() {
-        this.CurrentEntityInstance = this.GetDataFromControls(this.CurrentEntityInstance);
+        this.CurrentEntityInstance = this.SaveDataFromControls(this.CurrentEntityInstance);
         this.CurrentEntityInstance = this.parentApp.ShippingOrderService.CreateOrder(this.CurrentEntityInstance);
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs the edition actions.
     /// </summary>
     private void DoEditionAction() {
         // NOTE: on ne devrait pas pouvoir changer le client d'un ordre d'expédition
@@ -472,7 +480,7 @@ internal partial class ShippingOrderView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs the deletion actions.
     /// </summary>
     private void DoDeletionAction() {
         this.CurrentEntityInstance = this.parentApp.ShippingOrderService.DeleteOrder(this.CurrentEntityInstance);

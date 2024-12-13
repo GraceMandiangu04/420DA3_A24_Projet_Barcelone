@@ -6,23 +6,25 @@ using Project_Utilities.Enums;
 namespace _420DA3_A24_Projet.Presentation.Views;
 
 /// <summary>
-/// TODO @PROF : documenter
+/// Management window for <see cref="User"/> entities.
 /// </summary>
 internal partial class UserView : Form {
     private bool isInitialized = false;
     private readonly WsysApplication parentApp;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The <see cref="ViewActionsEnum"/> value indicating the intent for which the window
+    /// is currently opened or was opened last.
     /// </summary>
     public ViewActionsEnum CurrentAction { get; private set; }
     /// <summary>
-    /// TODO @PROF : documenter
+    /// The working <see cref="User"/> value with which the window is currently
+    /// opened or was opened last.
     /// </summary>
     public User CurrentEntityInstance { get; private set; } = null!;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// <see cref="UserView"/> constructor.
     /// </summary>
     /// <param name="application"></param>
     public UserView(WsysApplication application) {
@@ -31,7 +33,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="UserView"/> modal window in entity creation mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -41,7 +43,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="UserView"/> modal window in entity visualization mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -51,7 +53,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="UserView"/> modal window in entity edition mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -61,7 +63,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens a <see cref="UserView"/> modal window in entity deletion mode.
     /// </summary>
     /// <param name="instance"></param>
     /// <returns></returns>
@@ -71,7 +73,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Performs pre-opening initialization, clean-up and preparation for the <see cref="UserView"/> window.
     /// </summary>
     /// <param name="instance"></param>
     /// <param name="action"></param>
@@ -101,7 +103,8 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Ensures that the selector controls of the <see cref="UserView"/> window
+    /// with static content have their items populated.
     /// </summary>
     private void Initialize() {
         if (!this.isInitialized) {
@@ -111,7 +114,8 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Fills the roles and warehouse selectors of the <see cref="UserView"/> window with all
+    /// the existing <see cref="Role"/> and <see cref="Entrepot"/> values respectively.
     /// </summary>
     private void ReloadSelectors() {
         try {
@@ -135,7 +139,8 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Loads the data of a given <paramref name="user"/> in the <see cref="UserView"/>
+    /// window's controls.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
@@ -157,7 +162,8 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Takes data from the basic <see cref="UserView"/>'s controls and assigns
+    /// it to the given <paramref name="user"/>.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
@@ -173,7 +179,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Enables the <see cref="UserView"/> window's controls for creation and edition modes.
     /// </summary>
     private void ActivateControls() {
         this.usernameValue.Enabled = true;
@@ -183,7 +189,7 @@ internal partial class UserView : Form {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Disables the <see cref="UserView"/> window's controls for visualization and deletion modes.
     /// </summary>
     private void DeactivateControls() {
         this.usernameValue.Enabled = false;
@@ -192,11 +198,6 @@ internal partial class UserView : Form {
         this.userRolesValues.Enabled = false;
     }
 
-    /// <summary>
-    /// TODO @PROF : documenter
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void BtnAction_Click(object sender, EventArgs e) {
         try {
 
@@ -225,11 +226,6 @@ internal partial class UserView : Form {
         }
     }
 
-    /// <summary>
-    /// TODO @PROF : documenter
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void BtnCancel_Click(object sender, EventArgs e) {
         this.DialogResult = DialogResult.Cancel;
     }
