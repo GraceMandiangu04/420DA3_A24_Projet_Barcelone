@@ -1,23 +1,37 @@
 ﻿using _420DA3_A24_Projet.Business;
 using _420DA3_A24_Projet.Business.Domain;
 using Project_Utilities.Enums;
+using System.DirectoryServices;
+using Project_Utilities.Presentation;
 
 namespace _420DA3_A24_Projet.Presentation;
+
+/// <summary>
+/// TODO: documenter
+/// </summary>
 internal partial class AdminMainMenu : Form {
 
     /// <summary>
     /// Valeur générique pour indiquer qu'aucun élément n'est sélectionné dans une liste.
     /// À ajouter à vos listes pour offrir l'option "Aucun" aux utilisateurs.
     /// </summary>
-    private static object listNoneSelectedValue = "Aucun";
+    private static readonly object listNoneSelectedValue = "Aucun";
 
-    private WsysApplication parentApp;
+    private readonly WsysApplication parentApp;
 
+    /// <summary>
+    /// TODO: documenter
+    /// </summary>
+    /// <param name="application"></param>
     public AdminMainMenu(WsysApplication application) {
         this.parentApp = application;
         this.InitializeComponent();
     }
 
+    /// <summary>
+    /// TODO: documenter
+    /// </summary>
+    /// <returns></returns>
     public DialogResult ShowAdminMainMenu() {
         return this.ShowDialog();
     }
@@ -30,18 +44,27 @@ internal partial class AdminMainMenu : Form {
     #region GESTION DES UTILISATEURS
 
     /// <summary>
-    /// TODO @PROF: documenter
+    /// Empties the <see cref="User"/> search results <see cref="ListBox"/> then fills it with the given
+    /// <paramref name="searchResults"/>.
     /// </summary>
-    /// <param name="results"></param>
-    private void UpdateUserSearchResults(List<User> results) {
-        this.userSearchResults.Items.Clear();
-        this.userSearchResults.Items.Add(listNoneSelectedValue);
-        this.userSearchResults.Items.AddRange(results.ToArray());
-        this.userSearchResults.Refresh();
+    /// <param name="searchResults"></param>
+    private void ReloadUserSearchResults(List<User> searchResults) {
+        try {
+            this.userSearchResults.SelectedItem = null;
+            this.userSearchResults.SelectedIndex = -1;
+            this.userSearchResults.Items.Clear();
+            _ = this.userSearchResults.Items.Add(listNoneSelectedValue);
+            foreach (User user in searchResults) {
+                _ = this.userSearchResults.Items.Add(user);
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     /// <summary>
-    /// TODO @PROF: documenter
+    /// Enables the role action buttons.
     /// </summary>
     private void ActivateUserActionButtons() {
         this.buttonDeleteUser.Enabled = true;
@@ -50,7 +73,7 @@ internal partial class AdminMainMenu : Form {
     }
 
     /// <summary>
-    /// TODO @PROF: documenter
+    /// Disables the user action buttons.
     /// </summary>
     private void DeactivateUserActionButtons() {
         this.buttonDeleteUser.Enabled = false;
@@ -60,9 +83,9 @@ internal partial class AdminMainMenu : Form {
 
     private void ButtonCreateUser_Click(object sender, EventArgs e) {
         try {
-            User? userCree = this.parentApp.UserService.OpenUserManagementWindowForCreation();
+            User? userCree = this.parentApp.UserService.OpenManagementWindowForCreation();
             if (userCree != null) {
-                this.userSearchResults.Items.Add(userCree);
+                _ = this.userSearchResults.Items.Add(userCree);
                 this.userSearchResults.SelectedItem = userCree;
             }
 
@@ -72,9 +95,14 @@ internal partial class AdminMainMenu : Form {
     }
 
     private void UserSearchTextBox_TextChanged(object sender, EventArgs e) {
-        string searchCriterion = this.userSearchTextBox.Text.Trim();
-        List<User> results = this.parentApp.UserService.SearchUsers(searchCriterion);
-        this.UpdateUserSearchResults(results);
+        try {
+            string searchCriterion = this.userSearchTextBox.Text.Trim();
+            List<User> results = this.parentApp.UserService.SearchUsers(searchCriterion);
+            this.ReloadUserSearchResults(results);
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     private void UserSearchResults_SelectedIndexChanged(object sender, EventArgs e) {
@@ -89,7 +117,11 @@ internal partial class AdminMainMenu : Form {
     private void ButtonViewUser_Click(object sender, EventArgs e) {
         try {
             User selectedUser = (User) this.userSearchResults.SelectedItem;
-            User? userCree = this.parentApp.UserService.OpenUserManagementWindowForVisualization(selectedUser);
+            User? createdUser = this.parentApp.UserService.OpenManagementWindowForVisualization(selectedUser);
+            if (createdUser != null) {
+                _ = this.userSearchResults.Items.Add(createdUser);
+                this.userSearchResults.SelectedItem = createdUser;
+            }
 
         } catch (Exception ex) {
             this.parentApp.HandleException(ex);
@@ -99,7 +131,10 @@ internal partial class AdminMainMenu : Form {
     private void ButtonEditUser_Click(object sender, EventArgs e) {
         try {
             User selectedUser = (User) this.userSearchResults.SelectedItem;
-            User? userCree = this.parentApp.UserService.OpenUserManagementWindowForEdition(selectedUser);
+            bool wasUpdated = this.parentApp.UserService.OpenManagementWindowForEdition(selectedUser);
+            if (wasUpdated) {
+                this.soSearchResults.RefreshDisplay();
+            }
 
         } catch (Exception ex) {
             this.parentApp.HandleException(ex);
@@ -110,11 +145,12 @@ internal partial class AdminMainMenu : Form {
     private void ButtonDeleteUser_Click(object sender, EventArgs e) {
         try {
             User selectedUser = (User) this.userSearchResults.SelectedItem;
-            bool supprimeAvecSucces = this.parentApp.UserService.OpenUserManagementWindowForDeletion(selectedUser);
+            bool wasDeleted = this.parentApp.UserService.OpenManagementWindowForDeletion(selectedUser);
 
-            if (supprimeAvecSucces) {
+            if (wasDeleted) {
+                this.userSearchResults.SelectedItem = null;
+                this.userSearchResults.SelectedIndex = -1;
                 this.userSearchResults.Items.Remove(selectedUser);
-                this.userSearchResults.SelectedItem = listNoneSelectedValue;
             }
 
         } catch (Exception ex) {
@@ -128,25 +164,47 @@ internal partial class AdminMainMenu : Form {
 
     #region GESTION DES SHIPPING ORDERS
 
+    /// <summary>
+    /// Empties the <see cref="ShippingOrder"/> search results <see cref="ListBox"/> then fills it with the given
+    /// <paramref name="searchResults"/>.
+    /// </summary>
+    /// <param name="searchResults"></param>
     private void ReloadSOSearchResults(List<ShippingOrder> searchResults) {
-        this.soSearchResults.Items.Clear();
-        this.soSearchResults.SelectedItem = null;
-        foreach (ShippingOrder so in searchResults) {
-            _ = this.soSearchResults.Items.Add(so);
+        try {
+            this.soSearchResults.SelectedItem = null;
+            this.soSearchResults.SelectedIndex = -1;
+            this.soSearchResults.Items.Clear();
+            foreach (ShippingOrder so in searchResults) {
+                _ = this.soSearchResults.Items.Add(so);
+            }
+            this.soSearchResults.Refresh();
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
     }
 
     private void ButtonCreateSO_Click(object sender, EventArgs e) {
-        ShippingOrder? createdOrder = this.parentApp.ShippingOrderService.OpenManagementWindowForCreation();
-        if (createdOrder != null) {
-            _ = this.soSearchResults.Items.Add(createdOrder);
-            this.soSearchResults.SelectedItem = createdOrder;
+        try {
+            ShippingOrder? createdOrder = this.parentApp.ShippingOrderService.OpenManagementWindowForCreation();
+            if (createdOrder != null) {
+                _ = this.soSearchResults.Items.Add(createdOrder);
+                this.soSearchResults.SelectedItem = createdOrder;
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
     }
 
     private void SoSearchTextBox_TextChanged(object sender, EventArgs e) {
-        List<ShippingOrder> results = this.parentApp.ShippingOrderService.SearchOrders(this.soSearchTextBox.Text.Trim());
-        this.ReloadSOSearchResults(results);
+        try {
+            List<ShippingOrder> results = this.parentApp.ShippingOrderService.SearchOrders(this.soSearchTextBox.Text.Trim());
+            this.ReloadSOSearchResults(results);
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
     }
 
     private void SoSearchResults_SelectedIndexChanged(object sender, EventArgs e) {
@@ -169,34 +227,248 @@ internal partial class AdminMainMenu : Form {
     }
 
     private void ButtonViewSO_Click(object sender, EventArgs e) {
-        ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
-        if (selectedSO != null) {
-            _ = this.parentApp.ShippingOrderService.OpenManagementWindowForDetailsView(selectedSO);
+        try {
+            ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
+            if (selectedSO != null) {
+                _ = this.parentApp.ShippingOrderService.OpenManagementWindowForVisualization(selectedSO);
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
     }
 
     private void ButtonEditSO_Click(object sender, EventArgs e) {
-        ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
-        if (selectedSO != null) {
-            if (selectedSO.Status != ShippingOrderStatusEnum.Unassigned || selectedSO.Status != ShippingOrderStatusEnum.New) {
-                throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être modifiés.");
+        try {
+            ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
+            if (selectedSO != null) {
+                if (selectedSO.Status != ShippingOrderStatusEnum.Unassigned || selectedSO.Status != ShippingOrderStatusEnum.New) {
+                    throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être modifiés.");
+                }
+                bool wasUpdated = this.parentApp.ShippingOrderService.OpenManagementWindowForEdition(selectedSO);
+                if (wasUpdated) {
+                    this.soSearchResults.RefreshDisplay();
+                }
             }
-            _ = this.parentApp.ShippingOrderService.OpenManagementWindowForEdition(selectedSO);
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
         }
 
     }
 
     private void ButtonDeleteSO_Click(object sender, EventArgs e) {
+        try {
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
         ShippingOrder? selectedSO = this.soSearchResults.SelectedItem as ShippingOrder;
         if (selectedSO != null) {
             if (selectedSO.Status != ShippingOrderStatusEnum.Unassigned || selectedSO.Status != ShippingOrderStatusEnum.New) {
                 throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être supprimés.");
             }
-            _ = this.parentApp.ShippingOrderService.OpenManagementWindowForDeletion(selectedSO);
+            bool wasDeleted = this.parentApp.ShippingOrderService.OpenManagementWindowForDeletion(selectedSO);
+            if (wasDeleted) {
+                this.soSearchResults.SelectedItem = null;
+                this.soSearchResults.SelectedIndex = -1;
+                this.soSearchResults.Items.Remove(selectedSO);
+            }
         }
 
     }
 
+
+    #endregion
+
+
+    #region GESTION DES ROLES
+
+    /// <summary>
+    /// Empties the <see cref="Role"/> search results <see cref="ListBox"/> then fills it with the given
+    /// <paramref name="searchResults"/>.
+    /// </summary>
+    /// <param name="searchResults"></param>
+    private void ReloadRoleSearchResults(List<Role> searchResults) {
+        try {
+            this.roleSearchResults.SelectedItem = null;
+            this.roleSearchResults.SelectedIndex = -1;
+            this.roleSearchResults.Items.Clear();
+            foreach (Role role in searchResults) {
+                _ = this.roleSearchResults.Items.Add(role);
+            }
+            this.roleSearchResults.Refresh();
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+    }
+
+    /// <summary>
+    /// Enables the role action buttons.
+    /// </summary>
+    private void ActivateRoleActionButtons() {
+        this.buttonDeleteRole.Enabled = true;
+        this.buttonEditRole.Enabled = true;
+        this.buttonViewRole.Enabled = true;
+    }
+
+    /// <summary>
+    /// Disables the role action buttons.
+    /// </summary>
+    private void DeactivateRoleActionButtons() {
+        this.buttonDeleteRole.Enabled = false;
+        this.buttonEditRole.Enabled = false;
+        this.buttonViewRole.Enabled = false;
+    }
+
+    private void ButtonCreateRole_Click(object sender, EventArgs e) {
+        try {
+            Role? createdRole = this.parentApp.RoleService.OpenManagementWindowForCreation();
+            if (createdRole != null) {
+                _ = this.roleSearchResults.Items.Add(createdRole);
+                this.roleSearchResults.SelectedItem = createdRole;
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
+
+    private void RoleSearchTextBox_TextChanged(object sender, EventArgs e) {
+        try {
+            List<Role> results = this.parentApp.RoleService.SearchRoles(this.roleSearchTextBox.Text.Trim());
+            this.ReloadRoleSearchResults(results);
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
+
+    private void RoleSearchResults_SelectedIndexChanged(object sender, EventArgs e) {
+        Role? selectedRole = this.roleSearchResults.SelectedItem as Role;
+        if (selectedRole != null) {
+            this.ActivateRoleActionButtons();
+        } else {
+            this.DeactivateRoleActionButtons();
+        }
+    }
+
+    private void ButtonViewRole_Click(object sender, EventArgs e) {
+        try {
+            Role? selectedRole = this.roleSearchResults.SelectedItem as Role;
+            if (selectedRole != null) {
+                _ = this.parentApp.RoleService.OpenManagementWindowForVisualization(selectedRole);
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
+
+    private void ButtonEditRole_Click(object sender, EventArgs e) {
+        try {
+            Role? selectedRole = this.roleSearchResults.SelectedItem as Role;
+            if (selectedRole != null) {
+                bool wasUpdated = this.parentApp.RoleService.OpenManagementWindowForEdition(selectedRole);
+                if (wasUpdated) {
+                    this.roleSearchResults.RefreshDisplay();
+                }
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
+
+    private void ButtonDeleteRole_Click(object sender, EventArgs e) {
+        try {
+            Role? selectedRole = this.roleSearchResults.SelectedItem as Role;
+            if (selectedRole != null) {
+                bool wasDeleted = this.parentApp.RoleService.OpenManagementWindowForDeletion(selectedRole);
+                if (wasDeleted) {
+                    this.roleSearchResults.SelectedItem = null;
+                    this.roleSearchResults.SelectedIndex = -1;
+                    this.roleSearchResults.Items.Remove(selectedRole);
+                }
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
+
+    #endregion
+
+
+    #region GESTION DES ORDRES DE RESTOCKAGE
+
+    /// <summary>
+    /// Empties the <see cref="PurchaseOrder"/> search results <see cref="ListBox"/> then fills it with the given
+    /// <paramref name="searchResults"/>.
+    /// </summary>
+    /// <param name="searchResults"></param>
+    private void ReloadPOSearchResults(List<PurchaseOrder> searchResults) {
+        try {
+            this.poSearchResults.SelectedItem = null;
+            this.poSearchResults.SelectedIndex = -1;
+            this.poSearchResults.Items.Clear();
+            foreach (PurchaseOrder role in searchResults) {
+                _ = this.poSearchResults.Items.Add(role);
+            }
+            this.poSearchResults.Refresh();
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+    }
+
+    private void ButtonCreatePO_Click(object sender, EventArgs e) {
+        try {
+            PurchaseOrder? createdPO = this.parentApp.PurchaseOrderService.OpenManagementWindowForCreation();
+            if (createdPO != null) {
+                _ = this.poSearchResults.Items.Add(createdPO);
+                this.poSearchResults.SelectedItem = createdPO;
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
+
+    private void PoSearchTextBox_TextChanged(object sender, EventArgs e) {
+        try {
+            List<PurchaseOrder> results = this.parentApp.PurchaseOrderService.Search(this.poSearchTextBox.Text.Trim());
+            this.ReloadPOSearchResults(results);
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+    }
+
+    private void PoSearchResults_SelectedIndexChanged(object sender, EventArgs e) {
+        PurchaseOrder? selectedPO = this.poSearchResults.SelectedItem as PurchaseOrder;
+        this.buttonViewPO.Enabled = selectedPO != null;
+    }
+
+    private void ButtonViewPO_Click(object sender, EventArgs e) {
+        try {
+            PurchaseOrder? selectedPO = this.poSearchResults.SelectedItem as PurchaseOrder;
+            if (selectedPO != null) {
+                this.parentApp.PurchaseOrderService.OpenManagementWindowForVisualization(selectedPO);
+            }
+
+        } catch (Exception ex) {
+            this.parentApp.HandleException(ex);
+        }
+
+    }
 
     #endregion
 

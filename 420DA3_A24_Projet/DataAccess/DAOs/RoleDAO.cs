@@ -7,14 +7,14 @@ using System.Data;
 namespace _420DA3_A24_Projet.DataAccess.DAOs;
 
 /// <summary>
-/// TODO @PROF : documenter
+/// Data Access Object class for <see cref="Role"/> entities.
 /// </summary>
 internal class RoleDAO {
 
     private readonly WsysDbContext context;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// <see cref="RoleDAO"/> constructor.
     /// </summary>
     /// <param name="context"></param>
     public RoleDAO(WsysDbContext context) {
@@ -22,7 +22,7 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves the list of every <see cref="Role"/> from the database.
     /// </summary>
     /// <param name="includeDeleted"></param>
     /// <returns></returns>
@@ -38,7 +38,7 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves from the database the <see cref="Role"/> whose <see cref="Role.Id"/> matches the given <paramref name="id"/>.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="includeDeleted"></param>
@@ -56,7 +56,8 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves from the database the <see cref="Role"/> whose 
+    /// <see cref="Role.Name"/> matches the given <paramref name="roleName"/>.
     /// </summary>
     /// <param name="roleName"></param>
     /// <param name="includeDeleted"></param>
@@ -74,7 +75,7 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves from the database the list of every <see cref="Role"/> that matches a given <paramref name="criterion"/>.
     /// </summary>
     /// <param name="criterion"></param>
     /// <param name="includeDeleted"></param>
@@ -96,7 +97,7 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Inserts a <see cref="Role"/> in the database.
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>
@@ -112,7 +113,7 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Updates a <see cref="Role"/> in the database.
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>
@@ -132,7 +133,7 @@ internal class RoleDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Deletes a <see cref="Role"/> from the database.
     /// </summary>
     /// <param name="role"></param>
     /// <param name="softDeletes"></param>

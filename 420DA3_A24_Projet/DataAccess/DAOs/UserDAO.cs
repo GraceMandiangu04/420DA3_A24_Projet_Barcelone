@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace _420DA3_A24_Projet.DataAccess.DAOs;
 
 /// <summary>
-/// TODO @PROF : documenter
+/// Data Access Object class for <see cref="User"/> entities.
 /// </summary>
 internal class UserDAO {
 
     private readonly WsysDbContext context;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// <see cref="UserDAO"/> constructor.
     /// </summary>
     /// <param name="context"></param>
     public UserDAO(WsysDbContext context) {
@@ -21,7 +21,8 @@ internal class UserDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves from the database the <see cref="User"/> whose 
+    /// <see cref="User.Id"/> matches the given <paramref name="id"/>.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="includeDeleted"></param>
@@ -40,7 +41,8 @@ internal class UserDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves from the database the <see cref="User"/> whose 
+    /// <see cref="User.Username"/> matches the given <paramref name="username"/>.
     /// </summary>
     /// <param name="username"></param>
     /// <param name="includeDeleted"></param>
@@ -59,7 +61,7 @@ internal class UserDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Retrieves from the database the list of every <see cref="User"/> that matches a given <paramref name="criterion"/>.
     /// </summary>
     /// <param name="criterion"></param>
     /// <param name="includeDeleted"></param>
@@ -81,7 +83,7 @@ internal class UserDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Inserts a <see cref="User"/> in the database.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
@@ -97,7 +99,7 @@ internal class UserDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Updates a <see cref="User"/> in the database.
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
@@ -117,7 +119,7 @@ internal class UserDAO {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Deletes a <see cref="User"/> from the database.
     /// </summary>
     /// <param name="user"></param>
     /// <param name="softDeletes"></param>

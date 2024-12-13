@@ -8,16 +8,16 @@ using System.Runtime.Serialization;
 namespace _420DA3_A24_Projet.Business.Services;
 
 /// <summary>
-/// TODO @PROF : documenter
+/// Service class for managing <see cref="Role"/> entities.
 /// </summary>
 internal class RoleService {
 
-    private WsysApplication parentApp;
-    private RoleDAO dao;
-    private RoleView view;
+    private readonly WsysApplication parentApp;
+    private readonly RoleDAO dao;
+    private readonly RoleView view;
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// <see cref="RoleService"/> constructor.
     /// </summary>
     /// <param name="parentApp"></param>
     /// <param name="context"></param>
@@ -29,10 +29,10 @@ internal class RoleService {
 
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens the <see cref="RoleView">role management window</see> in creation mode.
     /// </summary>
     /// <returns></returns>
-    public Role? OpenRoleManagementWindowForCreation() {
+    public Role? OpenManagementWindowForCreation() {
         try {
             Role newRole = (Role) FormatterServices.GetUninitializedObject(typeof(Role));
             DialogResult result = this.view.OpenForCreation(newRole);
@@ -46,14 +46,15 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens the <see cref="RoleView">role management window</see> in edition mode
+    /// for the given <paramref name="role"/>.
     /// </summary>
-    /// <param name="instance"></param>
+    /// <param name="role"></param>
     /// <returns></returns>
-    public Role OpenRoleManagementWindowForEdition(Role instance) {
+    public bool OpenManagementWindowForEdition(Role role) {
         try {
-            _ = this.view.OpenForModification(instance);
-            return instance;
+            DialogResult result = this.view.OpenForModification(role);
+            return result == DialogResult.OK;
 
         } catch (Exception ex) {
             throw new Exception($"{this.GetType().ShortDisplayName}: Failed to open the role management window in role edition mode.", ex);
@@ -61,14 +62,15 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens the <see cref="RoleView">role management window</see> in visualization mode
+    /// for the given <paramref name="role"/>.
     /// </summary>
-    /// <param name="instance"></param>
+    /// <param name="role"></param>
     /// <returns></returns>
-    public Role OpenRoleManagementWindowForVisualization(Role instance) {
+    public Role OpenManagementWindowForVisualization(Role role) {
         try {
-            _ = this.view.OpenForDetailsView(instance);
-            return instance;
+            _ = this.view.OpenForDetailsView(role);
+            return role;
 
         } catch (Exception ex) {
             throw new Exception($"{this.GetType().ShortDisplayName}: Failed to open the role management window in role visualization mode.", ex);
@@ -76,13 +78,14 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Opens the <see cref="RoleView">role management window</see> in deletion mode
+    /// for the given <paramref name="role"/>.
     /// </summary>
-    /// <param name="instance"></param>
+    /// <param name="role"></param>
     /// <returns></returns>
-    public bool OpenRoleManagementWindowForDeletion(Role instance) {
+    public bool OpenManagementWindowForDeletion(Role role) {
         try {
-            DialogResult result = this.view.OpenForDeletion(instance);
+            DialogResult result = this.view.OpenForDeletion(role);
             return result == DialogResult.OK;
 
         } catch (Exception ex) {
@@ -91,7 +94,7 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Returns the list of every <see cref="Role"/> that exist in the data source.
     /// </summary>
     /// <param name="includeDeleted"></param>
     /// <returns></returns>
@@ -105,7 +108,8 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Returns the <see cref="Role"/> that matches the given <paramref name="id"/> 
+    /// in the data source or <see langword="null"/>.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="includeDeleted"></param>
@@ -120,7 +124,8 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Returns the <see cref="User"/> that matches the given <paramref name="roleName"/> 
+    /// in the data source or <see langword="null"/>.
     /// </summary>
     /// <param name="roleName"></param>
     /// <param name="includeDeleted"></param>
@@ -135,7 +140,7 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Returns the list of every <see cref="Role"/> that match the given <paramref name="criterion"/> in the data source.
     /// </summary>
     /// <param name="criterion"></param>
     /// <param name="includeDeleted"></param>
@@ -150,7 +155,7 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Inserts a <see cref="Role"/> in the data source.
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>
@@ -164,7 +169,7 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Updates a <see cref="Role"/> in the data source.
     /// </summary>
     /// <param name="role"></param>
     /// <returns></returns>
@@ -178,7 +183,7 @@ internal class RoleService {
     }
 
     /// <summary>
-    /// TODO @PROF : documenter
+    /// Deletes a <see cref="Role"/> in the data source.
     /// </summary>
     /// <param name="role"></param>
     /// <param name="softDeletes"></param>

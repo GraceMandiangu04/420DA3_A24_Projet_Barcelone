@@ -3,6 +3,7 @@ using _420DA3_A24_Projet.Business.Domain;
 using _420DA3_A24_Projet.Business.Domain.Pivots;
 using _420DA3_A24_Projet.Business.Domain.Utils;
 using Project_Utilities.Enums;
+using Project_Utilities.Presentation;
 
 namespace _420DA3_A24_Projet.Presentation.Views;
 
@@ -40,7 +41,7 @@ internal partial class ShippingOrderView : Form {
     /// <param name="instance"></param>
     /// <returns></returns>
     public DialogResult OpenForCreation(ShippingOrder instance) {
-        this.PreOpenSetup(instance, ViewActionsEnum.Creation, "Création d'un utilisateur", "Créer");
+        this.PreOpenSetup(instance, ViewActionsEnum.Creation, "Création d'un ordre d'expédition", "Créer");
         return this.ShowDialog();
     }
 
@@ -50,7 +51,7 @@ internal partial class ShippingOrderView : Form {
     /// <param name="instance"></param>
     /// <returns></returns>
     public DialogResult OpenForDetailsView(ShippingOrder instance) {
-        this.PreOpenSetup(instance, ViewActionsEnum.Visualization, "Détails d'un utilisateur", "OK");
+        this.PreOpenSetup(instance, ViewActionsEnum.Visualization, "Détails d'un ordre d'expédition", "OK");
         return this.ShowDialog();
     }
 
@@ -60,7 +61,7 @@ internal partial class ShippingOrderView : Form {
     /// <param name="instance"></param>
     /// <returns></returns>
     public DialogResult OpenForModification(ShippingOrder instance) {
-        this.PreOpenSetup(instance, ViewActionsEnum.Edition, "Modifier un utilisateur", "Enregistrer");
+        this.PreOpenSetup(instance, ViewActionsEnum.Edition, "Modifier un ordre d'expédition", "Enregistrer");
         return this.ShowDialog();
     }
 
@@ -70,7 +71,7 @@ internal partial class ShippingOrderView : Form {
     /// <param name="instance"></param>
     /// <returns></returns>
     public DialogResult OpenForDeletion(ShippingOrder instance) {
-        this.PreOpenSetup(instance, ViewActionsEnum.Deletion, "Supprimer un utilisateur", "Supprimer");
+        this.PreOpenSetup(instance, ViewActionsEnum.Deletion, "Supprimer un ordre d'expédition", "Supprimer");
         return this.ShowDialog();
     }
 
@@ -405,7 +406,7 @@ internal partial class ShippingOrderView : Form {
                 }
                 selectedShippingOrderProduct.Quantity = newQuantity;
                 // TODO @PROF: check mise à jour de l'affichage de la quantité dans la liste
-                this.orderProductsList.Refresh();
+                this.orderProductsList.RefreshDisplay();
             }
 
         } catch (Exception ex) {
