@@ -133,7 +133,7 @@ internal partial class AdminMainMenu : Form {
             User selectedUser = (User) this.userSearchResults.SelectedItem;
             bool wasUpdated = this.parentApp.UserService.OpenManagementWindowForEdition(selectedUser);
             if (wasUpdated) {
-                this.soSearchResults.RefreshDisplay();
+                this.userSearchResults.RefreshDisplay();
             }
 
         } catch (Exception ex) {
