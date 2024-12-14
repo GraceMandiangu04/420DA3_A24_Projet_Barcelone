@@ -288,6 +288,7 @@ partial class WhEmpMainMenu {
         this.unassSORefreshImage.Size = new Size(56, 34);
         this.unassSORefreshImage.TabIndex = 1;
         this.unassSORefreshImage.TabStop = false;
+        this.unassSORefreshImage.Visible = false;
         // 
         // unassignedSOHeader
         // 
@@ -402,6 +403,7 @@ partial class WhEmpMainMenu {
         this.processSORefreshImage.Size = new Size(56, 34);
         this.processSORefreshImage.TabIndex = 2;
         this.processSORefreshImage.TabStop = false;
+        this.processSORefreshImage.Visible = false;
         // 
         // processSOHeader
         // 
@@ -516,6 +518,7 @@ partial class WhEmpMainMenu {
         this.packagedSORefreshImage.Size = new Size(56, 34);
         this.packagedSORefreshImage.TabIndex = 2;
         this.packagedSORefreshImage.TabStop = false;
+        this.packagedSORefreshImage.Visible = false;
         // 
         // packagedSOHeader
         // 
@@ -630,6 +633,7 @@ partial class WhEmpMainMenu {
         this.expectedPORefreshImage.Size = new Size(56, 34);
         this.expectedPORefreshImage.TabIndex = 2;
         this.expectedPORefreshImage.TabStop = false;
+        this.expectedPORefreshImage.Visible = false;
         // 
         // expectedPOHeader
         // 
