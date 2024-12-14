@@ -476,7 +476,7 @@ internal partial class ShippingOrderView : Form {
     private void DoEditionAction() {
         // NOTE: on ne devrait pas pouvoir changer le client d'un ordre d'expédition
         // une fois qu'il est créé. C'est pourquoi on ne récupère pas les données du client.
-        this.CurrentEntityInstance = this.parentApp.ShippingOrderService.UpdateOrder(this.CurrentEntityInstance, this.modifications);
+        this.CurrentEntityInstance = this.parentApp.ShippingOrderService.ModifyOrder(this.CurrentEntityInstance, this.modifications);
     }
 
     /// <summary>

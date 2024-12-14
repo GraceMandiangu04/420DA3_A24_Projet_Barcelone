@@ -6,6 +6,7 @@ using _420DA3_A24_Projet.DataAccess.DAOs;
 using _420DA3_A24_Projet.Presentation.Views;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Project_Utilities.Enums;
+using Project_Utilities.Exceptions;
 using System.Runtime.Serialization;
 
 namespace _420DA3_A24_Projet.Business.Services;
@@ -99,6 +100,72 @@ internal class ShippingOrderService {
         }
 
     }
+
+    /// <summary>
+    /// Assigns a given <paramref name="order"/> to a given <paramref name="user"/> (warehouse employee) for fulfillment.
+    /// </summary>
+    /// <param name="order"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public ShippingOrder AssignOrderTo(ShippingOrder order, User user) {
+        try {
+            if (order.Status != ShippingOrderStatusEnum.Unassigned) {
+                throw new ValidationException("A shipping order must have the status 'Unassigned' to be assigned to a user.");
+            }
+            order.AssignToFulfillerEmployee(user);
+            return this.UpdateOrder(order);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to assign shipping order Id #{order.Id} to user [{user.Username}].", ex);
+        }
+    }
+
+    /// <summary>
+    /// Marks a given <paramref name="order"/> as packaged.
+    /// </summary>
+    /// <remarks>
+    /// The creation of a shipment for the order is required as part of the process.
+    /// </remarks>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    /// <exception cref="ValidationException"></exception>
+    /// <exception cref="Exception"></exception>
+    public ShippingOrder MarkOrderAsPackaged(ShippingOrder order) {
+        try {
+            if (order.Status != ShippingOrderStatusEnum.Processing) {
+                throw new ValidationException("A shipping order must have the status 'Processing' to be marked as packaged.");
+            }
+            // TODO @PROF: fix this when shipment creation window will be done
+            Expedition shipment = this.parentApp.ExpeditionService.OpenManagementWindowForCreation() 
+                ?? throw new Exception("You must create a shipment to mark a shipping order as packaged.");
+            order.MarkAsPackaged(shipment);
+            return this.UpdateOrder(order);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to mark shipping order Id #{order.Id} as packaged.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Marks a given <paramref name="order"/> as shipped.
+    /// </summary>
+    /// <param name="order"></param>
+    /// <returns></returns>
+    /// <exception cref="ValidationException"></exception>
+    /// <exception cref="Exception"></exception>
+    public ShippingOrder MarkOrderAsShipped(ShippingOrder order) {
+        try {
+            if (order.Status != ShippingOrderStatusEnum.Packaged) {
+                throw new ValidationException("A shipping order must have the status 'Packaged' to be marked as shipped.");
+            }
+            order.MarkAsShipped();
+            return this.UpdateOrder(order);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to mark shipping order Id #{order.Id} as shipped (Shipment Id #{order.Shipment?.ExpeditionId}).", ex);
+        }
+    }
+
 
     /// <summary>
     /// Returns the <see cref="ShippingOrder"/> whose <see cref="ShippingOrder.Id"/> 
@@ -249,13 +316,14 @@ internal class ShippingOrderService {
     }
 
     /// <summary>
-    /// Updates a <see cref="ShippingOrder"/> in the data source.
+    /// Modifies a <see cref="ShippingOrder"/> based on a given list of <see cref="ShippingOrderProductModification">modifications</see>
+    /// from the user interface.
     /// </summary>
     /// <param name="order"></param>
     /// <param name="modifications"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public ShippingOrder UpdateOrder(ShippingOrder order, List<ShippingOrderProductModification> modifications) {
+    public ShippingOrder ModifyOrder(ShippingOrder order, List<ShippingOrderProductModification> modifications) {
         try {
             if (order.Status != ShippingOrderStatusEnum.Unassigned && order.Status != ShippingOrderStatusEnum.New) {
                 throw new Exception("Seuls les ordres d'expédition non assignés ou nouveaux peuvent être modifiés.");
@@ -310,12 +378,30 @@ internal class ShippingOrderService {
                         break;
                 }
             }
+            return this.UpdateOrder(order);
+
+        } catch (Exception ex) {
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to modify shipping order Id #{order.Id}.", ex);
+        }
+    }
+
+    /// <summary>
+    /// Updates a <see cref="ShippingOrder"/> in the data source.
+    /// </summary>
+    /// <param name="order"></param>
+    /// <param name="modifications"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public ShippingOrder UpdateOrder(ShippingOrder order) {
+        try {
             return this.dao.Update(order);
 
         } catch (Exception ex) {
-            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to update shipping order Id #{order.Id}.", ex);
+            throw new Exception($"{this.GetType().ShortDisplayName}: Failed to update shipping order Id# {order.Id}.", ex);
         }
     }
+
+
 
     /// <summary>
     /// Deletes a <see cref="ShippingOrder"/> from the data source.
