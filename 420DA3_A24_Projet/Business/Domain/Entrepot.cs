@@ -29,6 +29,12 @@ public class Entrepot {
     /// </summary>
 
     public virtual Produit Produit { get; set; } = null!;
+    public static int NAME_MAX_LENGTH { get; internal set; }
+    public static int ADRESSE_MAX_LENGTH { get; internal set; }
+    public object DateCreated { get; internal set; }
+    public object DateModified { get; internal set; }
+    public object RowVersion { get; internal set; }
+    public object DateDeleted { get; internal set; }
 
 
     ///<summary>
