@@ -208,6 +208,7 @@ internal partial class ShippingOrderView : Form {
     /// </summary>
     /// <param name="order"></param>
     private void ReloadOrderProductsListBox(ShippingOrder order) {
+        this.orderProductsList.SelectedItems.Cast<ShippingOrderProduct>().ToList();
         this.orderProductsList.Items.Clear();
         this.orderProductsList.SelectedItem = null;
         this.orderProductsList.SelectedItems.Clear();
@@ -286,8 +287,8 @@ internal partial class ShippingOrderView : Form {
             this.buttonAddProduct.Enabled = false;
         } else {
             this.productAddQuantityValue.Maximum = selectedProduct.qteStock;
-            this.productAddQuantityValue.Enabled = false;
-            this.buttonAddProduct.Enabled = false;
+            this.productAddQuantityValue.Enabled = true;
+            this.buttonAddProduct.Enabled = true;
         }
     }
 
@@ -333,6 +334,7 @@ internal partial class ShippingOrderView : Form {
             this.buttonRemoveProduct.Enabled = false;
         } else {
             this.productChangeQuantityValue.Maximum = selectedShippingOrderProduct.Product.qteStock;
+            this.productChangeQuantityValue.Value = selectedShippingOrderProduct.Quantity;
             this.productChangeQuantityValue.Enabled = false;
             this.buttonRemoveProduct.Enabled = false;
         }
@@ -485,6 +487,7 @@ internal partial class ShippingOrderView : Form {
     private void DoDeletionAction() {
         this.CurrentEntityInstance = this.parentApp.ShippingOrderService.DeleteOrder(this.CurrentEntityInstance);
     }
+
 
 
 }
