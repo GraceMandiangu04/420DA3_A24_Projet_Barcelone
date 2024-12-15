@@ -15,13 +15,15 @@ internal class WsysDbContext : DbContext {
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
 
-
     public DbSet<Entrepot> Entrepots { get; set; }
 
     public DbSet<Produit> Produits { get; set; }
+
+    public DbSet<Adresse> Adresses { get; set; }
+    public DbSet<Expedition> Expeditions { get; set; }
+
     public DbSet<Fournisseur> Fournisseurs { get; set; }
     public DbSet<Client> Clients { get; set; }
-
 
     public DbSet<ShippingOrder> ShippingOrders { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
@@ -217,9 +219,9 @@ internal class WsysDbContext : DbContext {
            .Property(Entrepot => Entrepot.DateCreated)
            .HasColumnName("DateCreated")
            .HasColumnOrder(3)
-           .HasColumnType("datetime2(5)") 
-           .HasPrecision(5) 
-           .HasDefaultValueSql("GETUTCDATE()") 
+           .HasColumnType("datetime2(5)")
+           .HasPrecision(5)
+           .HasDefaultValueSql("GETUTCDATE()")
            .IsRequired(true);
 
         _ = modelBuilder.Entity<Entrepot>()
@@ -228,7 +230,7 @@ internal class WsysDbContext : DbContext {
             .HasColumnOrder(4)
             .HasColumnType("datetime2(5)")
             .HasPrecision(5)
-            .IsRequired(false); 
+            .IsRequired(false);
 
         _ = modelBuilder.Entity<Entrepot>()
             .Property(Entrepot => Entrepot.DateDeleted)
@@ -239,7 +241,7 @@ internal class WsysDbContext : DbContext {
             .IsRequired(false);
 
         _ = modelBuilder.Entity<Entrepot>()
-            .Property( Entrepot => Entrepot.RowVersion)
+            .Property(Entrepot => Entrepot.RowVersion)
             .HasColumnOrder(6)
             .HasColumnName("RowVersion")
             .IsRowVersion();
@@ -274,7 +276,7 @@ internal class WsysDbContext : DbContext {
            .IsRequired(true);
 
         _ = modelBuilder.Entity<Produit>()
-           .Property(Produit=> Produit.codeUpcinternational)
+           .Property(Produit => Produit.codeUpcinternational)
            .HasColumnName("codeUpcinternational")
            .HasColumnOrder(3)
            .HasColumnType($"nVarchar")
@@ -556,7 +558,22 @@ internal class WsysDbContext : DbContext {
             .HasColumnOrder(9)
             .IsRowVersion();
 
-        // TODO: @PROF Faire config des relations de PurchaseOrder
+
+
+        _ = modelBuilder.Entity<PurchaseOrder>()
+            .HasOne(po => po.OrderedProduct)
+            .WithMany(produit => produit.ProductPurchaseOrders)
+            .HasForeignKey(po => po.OrderedProductId)
+            .HasPrincipalKey(produit => produit.Id)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        _ = modelBuilder.Entity<PurchaseOrder>()
+            .HasOne(po => po.DestinationWarehouse)
+            .WithMany(wh => wh.OrdresRestockage)
+            .HasForeignKey(po => po.DestinationWarehouseId)
+            .HasPrincipalKey(wh => wh.id)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         #endregion
 
@@ -786,6 +803,155 @@ internal class WsysDbContext : DbContext {
             .HasForeignKey(produit => produit.ClientId)
             .IsRequired(true)
             .OnDelete(DeleteBehavior.Cascade);
+
+        #endregion
+
+        #region ADRESSE
+
+        _ = modelBuilder.Entity<Adresse>()
+            .ToTable(nameof(this.Adresses))
+            .HasKey(adresse => adresse.AdresseId);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.AdresseId)
+            .HasColumnName(nameof(Adresse.AdresseId))
+            .HasColumnOrder(0)
+            .HasColumnType("int")
+            .UseIdentityColumn(1, 1);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.TypeAdresse)
+            .HasColumnName(nameof(Adresse.TypeAdresse))
+            .HasColumnOrder(1)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Destinataire)
+            .HasColumnName(nameof(Adresse.Destinataire))
+            .HasColumnOrder(2)
+            .HasColumnType("nvarchar(100)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Rue)
+            .HasColumnName(nameof(Adresse.Rue))
+            .HasColumnOrder(3)
+            .HasColumnType("nvarchar(100)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Ville)
+            .HasColumnName(nameof(Adresse.Ville))
+            .HasColumnOrder(4)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Province)
+            .HasColumnName(nameof(Adresse.Province))
+            .HasColumnOrder(5)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.Pays)
+            .HasColumnName(nameof(Adresse.Pays))
+            .HasColumnOrder(6)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.CodePostal)
+            .HasColumnName(nameof(Adresse.CodePostal))
+            .HasColumnOrder(7)
+            .HasColumnType("nvarchar(10)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.DateCreation)
+            .HasColumnName(nameof(Adresse.DateCreation))
+            .HasColumnOrder(8)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .HasDefaultValueSql("GETDATE()")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.DateModification)
+            .HasColumnName(nameof(Adresse.DateModification))
+            .HasColumnOrder(9)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Adresse>()
+            .Property(adresse => adresse.DateSuppression)
+            .HasColumnName(nameof(Adresse.DateSuppression))
+            .HasColumnOrder(10)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        #endregion
+
+        #region EXPEDITION
+
+        _ = modelBuilder.Entity<Expedition>()
+            .ToTable(nameof(this.Expeditions))
+            .HasKey(expedition => expedition.ExpeditionId);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.ExpeditionId)
+            .HasColumnName(nameof(Expedition.ExpeditionId))
+            .HasColumnOrder(0)
+            .HasColumnType("int")
+            .UseIdentityColumn(1, 1);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.ServiceLivraison)
+            .HasColumnName(nameof(Expedition.ServiceLivraison))
+            .HasColumnOrder(1)
+            .HasColumnType("nvarchar(50)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.CodeSuivi)
+            .HasColumnName(nameof(Expedition.CodeSuivi))
+            .HasColumnOrder(2)
+            .HasColumnType("nvarchar(100)")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.DateCreation)
+            .HasColumnName(nameof(Expedition.DateCreation))
+            .HasColumnOrder(3)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .HasDefaultValueSql("GETDATE()")
+            .IsRequired(true);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.DateModification)
+            .HasColumnName(nameof(Expedition.DateModification))
+            .HasColumnOrder(4)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .Property(expedition => expedition.DateSuppression)
+            .HasColumnName(nameof(Expedition.DateSuppression))
+            .HasColumnOrder(5)
+            .HasColumnType("datetime2")
+            .HasPrecision(7)
+            .IsRequired(false);
+
+        _ = modelBuilder.Entity<Expedition>()
+            .HasOne(expedition => expedition.OrdreExpedition)
+            .WithOne(order => order.Shipment)
+            .HasForeignKey<Expedition>(expedition => expedition.OrdreExpeditionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         #endregion
 

@@ -31,6 +31,16 @@ public class ShippingOrderProduct {
     /// <summary>
     /// Constructeur orienté création manuelle
     /// </summary>
+    /// <param name="productId">L'identifiant du produit.</param>
+    /// <param name="quantity">La quantité du produit associé à cet ordre d'expédition.</param>
+    public ShippingOrderProduct(int productId, int quantity = 0) {
+        this.ProductId = productId;
+        this.Quantity = quantity;
+    }
+
+    /// <summary>
+    /// Constructeur orienté création manuelle
+    /// </summary>
     /// <param name="shippingOrderId">L'identifiant de l'ordre d'expédition.</param>
     /// <param name="productId">L'identifiant du produit.</param>
     /// <param name="quantity">La quantité du produit associé à cet ordre d'expédition.</param>
@@ -69,7 +79,7 @@ public class ShippingOrderProduct {
     /// </summary>
     /// <returns>Un string décrivant l'association produit-ordre d'expédition.</returns>
     public override string ToString() {
-        return $"{this.Product.nom_produit} (Qty: {this.Quantity})";
+        return $"{this.Product.nomproduit} (Qty: {this.Quantity})";
     }
 
 }

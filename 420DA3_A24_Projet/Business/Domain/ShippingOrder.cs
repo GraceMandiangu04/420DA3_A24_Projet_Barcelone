@@ -103,7 +103,7 @@ public class ShippingOrder {
     /// <param name="warehouseEmployee">L'employé d'entrepôt à assigner.</param>
     /// <exception cref="InvalidOperationException">Si le statut de l'ordre d'expédition n'est pas "Unassigned".</exception>
     /// <exception cref="ArgumentException">Si l'utilisateur reçu n'est pas un employé d'entrepôt.</exception>
-    public void AssignToWarehouseEmployee(User warehouseEmployee) {
+    public void AssignToFulfillerEmployee(User warehouseEmployee) {
         if (this.Status != ShippingOrderStatusEnum.Unassigned) {
             throw new InvalidOperationException("Shipping order must be in Unassigned status to be assigned to a warehouse employee.");
         }
@@ -163,16 +163,16 @@ public class ShippingOrder {
         StringBuilder sb = new StringBuilder();
         switch (this.Status) {
             case ShippingOrderStatusEnum.Processing:
-                _ = sb.Append($"#{this.Id} ({this.Status} by {this.FulfillerEmployee?.Username}) - Client: #{this.SourceClient.Id} {this.SourceClient.ClientName}");
+                _ = sb.Append($"#{this.Id} ({this.Status} by {this.FulfillerEmployee?.Username}) - Client: #{this.SourceClient.Id} {this.SourceClient.NomCompagnie}");
                 break;
             case ShippingOrderStatusEnum.Packaged:
             case ShippingOrderStatusEnum.Shipped:
-                _ = sb.Append($"#{this.Id} ({this.Status} - Shipment: {this.Shipment?.CodeSuivi}) - Client: #{this.SourceClient.Id} {this.SourceClient.ClientName}");
+                _ = sb.Append($"#{this.Id} ({this.Status} - Shipment: {this.Shipment?.CodeSuivi}) - Client: #{this.SourceClient.Id} {this.SourceClient.NomCompagnie}");
                 break;
             case ShippingOrderStatusEnum.New:
             case ShippingOrderStatusEnum.Unassigned:
             default:
-                _ = sb.Append($"#{this.Id} ({this.Status}) - Client: #{this.SourceClient.Id} {this.SourceClient.ClientName}");
+                _ = sb.Append($"#{this.Id} ({this.Status}) - Client: #{this.SourceClient.Id} {this.SourceClient.NomCompagnie}");
                 break;
 
         }
