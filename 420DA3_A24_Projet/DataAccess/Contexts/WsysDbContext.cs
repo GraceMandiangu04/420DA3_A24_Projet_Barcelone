@@ -15,13 +15,13 @@ internal class WsysDbContext : DbContext {
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
 
+
     public DbSet<Entrepot> Entrepots { get; set; }
 
     public DbSet<Produit> Produits { get; set; }
-
-
     public DbSet<Fournisseur> Fournisseurs { get; set; }
     public DbSet<Client> Clients { get; set; }
+
 
     public DbSet<ShippingOrder> ShippingOrders { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }

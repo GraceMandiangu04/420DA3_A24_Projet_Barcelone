@@ -33,6 +33,12 @@ internal class Entrepot {
     /// </summary>
 
     public virtual Produit Produit { get; set; } = null!;
+    public static object NAME_MAX_LENGTH { get; internal set; }
+    public static object ADRESSE_MAX_LENGTH { get; internal set; }
+    public object DateCreated { get; internal set; }
+    public object DateModified { get; internal set; }
+    public object RowVersion { get; internal set; }
+    public object DateDeleted { get; internal set; }
 
 
     ///<summary>
@@ -41,7 +47,7 @@ internal class Entrepot {
     ///<param name="nomEntrepot">Le nom de l'entrepot</param>
     ///<param name="UserId">L'identifiant de de l'utilisateur</param>
     ///<param name="ProduitId">L'identifiant du produit</param>
-    
+
     public Entrepot(int Id , string NomEntrepot, string Adresse ) {
         this.id = Id;
         this.nomEntrepot = NomEntrepot;
