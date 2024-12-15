@@ -265,4 +265,14 @@ internal partial class PurchaseOrderView : Form {
             this.parentApp.HandleException(ex);
         }
     }
-}
+
+    private void ProductSearchResults_SelectedIndexChanged(object sender, EventArgs e) {
+        Produit? selectedProduct = this.productSearchResults.SelectedItem as Produit;
+        if (selectedProduct is not null) {
+            this.quantityValue.Maximum = selectedProduct.qteStock;
+            this.quantityValue.Value = 1;
+        }
+    }
+
+
+ }
