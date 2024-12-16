@@ -1,5 +1,12 @@
-﻿namespace _420DA3_A24_Projet.Business.Domain;
-public class Entrepot {
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace _420DA3_A24_Projet.Business.Domain;
+internal class Entrepot {
+    internal object Clients;
 
     //Identifiant
     public int id { get; set; }
@@ -14,9 +21,7 @@ public class Entrepot {
     public DateTime? dateDeleted { get; set; }
     public byte[] rowVersion { get; set; } = null!;
 
-
     //Proprietés de navigation EF Core
-    public virtual List<PurchaseOrder> OrdresRestockage { get; set; }
 
 
     ///<summary>
@@ -29,12 +34,6 @@ public class Entrepot {
     /// </summary>
 
     public virtual Produit Produit { get; set; } = null!;
-    public static int NAME_MAX_LENGTH { get; internal set; }
-    public static int ADRESSE_MAX_LENGTH { get; internal set; }
-    public object DateCreated { get; internal set; }
-    public object DateModified { get; internal set; }
-    public object RowVersion { get; internal set; }
-    public object DateDeleted { get; internal set; }
 
 
     ///<summary>
@@ -43,8 +42,8 @@ public class Entrepot {
     ///<param name="nomEntrepot">Le nom de l'entrepot</param>
     ///<param name="UserId">L'identifiant de de l'utilisateur</param>
     ///<param name="ProduitId">L'identifiant du produit</param>
-
-    public Entrepot(int Id, string NomEntrepot, string Adresse) {
+    
+    public Entrepot(int Id , string NomEntrepot, string Adresse ) {
         this.id = Id;
         this.nomEntrepot = NomEntrepot;
         this.adresse = Adresse;
@@ -70,7 +69,7 @@ public class Entrepot {
         DateTime? dateModified,
         DateTime? dateDeleted,
         byte[] rowVersion)
-        : this(Id, NomEntrepot, Adresse) {
+        : this(Id , NomEntrepot, Adresse) {
 
         this.id = Id;
         this.dateCreated = dateCreated;

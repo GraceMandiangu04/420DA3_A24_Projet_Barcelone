@@ -10,7 +10,7 @@ namespace _420DA3_A24_Projet.DataAccess.Contexts;
 /// <summary>
 /// TODO: documentation
 /// </summary>
-internal class WsysDbContext : DbContext {
+public class WsysDbContext : DbContext {
 
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }

@@ -8,7 +8,7 @@ namespace _420DA3_A24_Projet.Business.Services;
 /// <summary>
 /// Service pour la gestion des fournisseurs.
 /// </summary>
-internal class FournisseurService {
+public class FournisseurService {
     private readonly WsysDbContext _context;
 
     public FournisseurService(WsysDbContext context) {

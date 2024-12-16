@@ -8,7 +8,7 @@ namespace _420DA3_A24_Projet.Business.Services;
 /// <summary>
 /// Service pour la gestion des clients.
 /// </summary>
-internal class ClientService {
+public class ClientService {
     private readonly WsysDbContext _context;
 
     public ClientService(WsysDbContext context) {
