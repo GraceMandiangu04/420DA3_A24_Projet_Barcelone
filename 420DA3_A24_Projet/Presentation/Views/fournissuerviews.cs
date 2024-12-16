@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace _420DA3_A24_Projet.Presentation.Views;
-public partial class fournisseurviews : Form {
-    public fournisseurviews() {
+public partial class fournissuerviews : Form {
+    public fournissuerviews() {
         InitializeComponent();
     }
 }

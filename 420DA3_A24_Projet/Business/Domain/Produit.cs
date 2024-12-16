@@ -1,9 +1,4 @@
 ﻿using _420DA3_A24_Projet.Business.Domain.Pivots;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _420DA3_A24_Projet.Business.Domain;
 public class Produit {
@@ -32,6 +27,7 @@ public class Produit {
 
     // Propriétés de navigation EF Core
     public virtual List<ShippingOrderProduct> OrgderProducts { get; set; }
+    public virtual List<PurchaseOrder> ProductPurchaseOrders { get; set; }
 
     ///<summary>
     ///Constructeur orienté creation manuelle
@@ -48,8 +44,7 @@ public class Produit {
     /// <param name="qteStockVise">La quantite des produit en stock visé </param>
     /// <param name="poids">Le poids de produits </param>
 
-    public Produit(int id, string Nomproduit, string Descriptionproduit, string CodeUPCInternational , string NomFichierProduit , Fournisseur Frournisseur, string codeProduitFournisseur, int QteStock, int QteStockVise,float Poids) 
-        {
+    public Produit(int id, string Nomproduit, string Descriptionproduit, string CodeUPCInternational, string NomFichierProduit, Fournisseur Frournisseur, string codeProduitFournisseur, int QteStock, int QteStockVise, float Poids) {
         this.Id = id;
         this.nomproduit = Nomproduit;
         this.descriptionproduit = Descriptionproduit;
@@ -95,18 +90,18 @@ public class Produit {
         DateTime dateCreated,
         DateTime? datemodified,
         DateTime? dateDelete,
-        byte [] rowVersion)
-        : this(Nomproduit, Descriptionproduit, CodeUPCInternational,NomFichierProduit, proprietaireproduit, fournisseur,codeProduitFournisseur, QteStock, QteStockVise, Poids) {
+        byte[] rowVersion)
+        : this(Nomproduit, Descriptionproduit, CodeUPCInternational, NomFichierProduit, proprietaireproduit, fournisseur, codeProduitFournisseur, QteStock, QteStockVise, Poids) {
 
         this.Id = id;
         this.dateCreated = dateCreated;
         this.dateModified = datemodified;
         this.dateDelete = dateDelete;
         this.RowVersion = rowVersion;
-    
+
     }
 
-    public Produit(string nomproduit, string descriptionproduit, string codeUPCInternational,string NomFichierProduit, Client proprietaireproduit, Fournisseur fournisseur,string codeProduitFournisseur,  int qteStock, int qteStockVise, float poids) {
+    public Produit(string nomproduit, string descriptionproduit, string codeUPCInternational, string NomFichierProduit, Client proprietaireproduit, Fournisseur fournisseur, string codeProduitFournisseur, int qteStock, int qteStockVise, float poids) {
         this.nomproduit = nomproduit;
         this.descriptionproduit = descriptionproduit;
         this.codeUpcinternational = codeUPCInternational;
@@ -128,6 +123,6 @@ public class Produit {
         return $"#{this.Id} - {this.nomproduit} - {this.descriptionproduit} - {this.codeUpcinternational} - {this.proprietaireProduit} - {this.fournisseur} - {this.codeProduitFournisseur} - {this.qteStock} - {this.qteStockVise} - {this.poids}";
 
     }
-   
-      
+
+
 }

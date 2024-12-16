@@ -1,4 +1,5 @@
 ﻿using Project_Utilities.Enums;
+using Project_Utilities.Exceptions;
 
 namespace _420DA3_A24_Projet.Business.Domain;
 
@@ -83,6 +84,30 @@ public class PurchaseOrder {
         this.RowVersion = rowVersion;
     }
 
+    /// <summary>
+    /// Marks the <see cref="PurchaseOrder"/> as completed.
+    /// </summary>
+    /// <remarks>
+    /// Its <see cref="Status">status</see> will be set to <see cref="PurchaseOrderStatusEnum.Completed"/>,
+    /// its <see cref="CompletionDate">completion date</see> will be set to <see cref="DateTime.Now"/> and
+    /// the <see cref="Produit.qteStock">quantity in stock</see> of its 
+    /// <see cref="OrderedProduct">ordered product</see> will be incremented by the order's
+    /// <see cref="Quantity">quantity</see>.
+    /// </remarks>
+    public void MarkCompleted() {
+        if (this.Status == PurchaseOrderStatusEnum.Completed) {
+            throw new ValidationException("Purchase order is already completed.");
+        }
+        this.OrderedProduct.qteStock += this.Quantity;
+        this.CompletionDate = DateTime.Now;
+        this.Status = PurchaseOrderStatusEnum.Completed;
+    }
+
+    /// <summary>
+    /// Validates that the <see cref="PurchaseOrder"/>'s <see cref="Quantity"/> is greater or equals to 1.
+    /// </summary>
+    /// <param name="quantity"></param>
+    /// <returns></returns>
     public bool ValidateQuantity(int quantity) {
         return quantity >= 1;
     }
