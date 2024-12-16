@@ -1,70 +1,45 @@
-﻿using _420DA3_A24_Projet.DataAccess.Contexts;
-using _420DA3_A24_Projet.Business.Domain;
+﻿using _420DA3_A24_Projet.Business.Domain;
+using _420DA3_A24_Projet.DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace _420DA3_A24_Projet.DataAccess.DAOs;
 
-/// <summary>
-/// DAO pour la gestion des données de l'entité Adresse.
-/// </summary>
-public class AdresseDAO {
+internal class AdresseDAO {
 
-    private readonly WsysDbContext _context;
+    private readonly WsysDbContext context;
 
-    /// <summary>
-    /// Constructeur pour initialiser le contexte de la base de données.
-    /// </summary>
-    /// <param name="context">Contexte de la base de données.</param>
     public AdresseDAO(WsysDbContext context) {
-        _context = context;
+        this.context = context;
     }
 
-    /// <summary>
-    /// Récupère toutes les adresses dans la base de données.
-    /// </summary>
-    /// <returns>Liste d'adresses.</returns>
-    public async Task<List<Adresse>> ObtenirToutesLesAdressesAsync() {
-        return await _context.Adresses.ToListAsync();
+    public Adresse? GetById(int id) {
+        return this.context.Adresses
+            .FirstOrDefault(adresse => adresse.AdresseId == id && adresse.DateSuppression == null);
     }
 
-    /// <summary>
-    /// Récupère une adresse par son identifiant.
-    /// </summary>
-    /// <param name="id">Identifiant de l'adresse.</param>
-    /// <returns>Adresse correspondante ou null si non trouvée.</returns>
-    public async Task<Adresse?> ObtenirAdresseParIdAsync(int id) {
-        return await _context.Adresses.FindAsync(id);
+    public List<Adresse> GetAll() {
+        return this.context.Adresses
+            .Where(adresse => adresse.DateSuppression == null)
+            .ToList();
     }
 
-    /// <summary>
-    /// Ajoute une nouvelle adresse dans la base de données.
-    /// </summary>
-    /// <param name="adresse">Adresse à ajouter.</param>
-    /// <returns>L'adresse ajoutée.</returns>
-    public async Task<Adresse> AjouterAdresseAsync(Adresse adresse) {
-        _context.Adresses.Add(adresse);
-        await _context.SaveChangesAsync();
+    public Adresse Create(Adresse adresse) {
+        this.context.Adresses.Add(adresse);
+        this.context.SaveChanges();
         return adresse;
     }
 
-    /// <summary>
-    /// Met à jour une adresse existante.
-    /// </summary>
-    /// <param name="adresse">Adresse à mettre à jour.</param>
-    public async Task MettreAJourAdresseAsync(Adresse adresse) {
-        _context.Adresses.Update(adresse);
-        await _context.SaveChangesAsync();
+    public Adresse Update(Adresse adresse) {
+        adresse.DateModification = DateTime.Now;
+        this.context.Adresses.Update(adresse);
+        this.context.SaveChanges();
+        return adresse;
     }
 
-    /// <summary>
-    /// Supprime une adresse par son identifiant.
-    /// </summary>
-    /// <param name="id">Identifiant de l'adresse à supprimer.</param>
-    public async Task SupprimerAdresseAsync(int id) {
-        var adresse = await ObtenirAdresseParIdAsync(id);
-        if (adresse != null) {
-            _context.Adresses.Remove(adresse);
-            await _context.SaveChangesAsync();
-        }
+    public Adresse Delete(Adresse adresse) {
+        adresse.DateSuppression = DateTime.Now;
+        this.context.Adresses.Update(adresse);
+        this.context.SaveChanges();
+        return adresse;
     }
 }

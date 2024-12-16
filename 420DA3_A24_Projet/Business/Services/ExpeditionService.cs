@@ -1,38 +1,34 @@
 ﻿using _420DA3_A24_Projet.Business.Domain;
 using _420DA3_A24_Projet.DataAccess.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using _420DA3_A24_Projet.DataAccess.DAOs;
 
 namespace _420DA3_A24_Projet.Business.Services;
+
 internal class ExpeditionService {
-    private readonly WsysDbContext _context;
 
-    public ExpeditionService(WsysDbContext context) {
-        _context = context;
-    }
+    private readonly ExpeditionDAO expeditionDAO;
 
-    public void Create(Expedition expedition) {
-        _context.Expeditions.Add(expedition);
-        _context.SaveChanges();
+    public ExpeditionService(WsysApplication parentApp, WsysDbContext context) {
+        this.expeditionDAO = new ExpeditionDAO(context);
     }
 
     public Expedition? GetById(int id) {
-        return _context.Expeditions.Find(id);
+        return this.expeditionDAO.GetById(id);
     }
 
-    public void Update(Expedition expedition) {
-        _context.Expeditions.Update(expedition);
-        _context.SaveChanges();
+    public List<Expedition> GetAll() {
+        return this.expeditionDAO.GetAll();
     }
 
-    public void Delete(int id) {
-        var expedition = _context.Expeditions.Find(id);
-        if (expedition != null) {
-            _context.Expeditions.Remove(expedition);
-            _context.SaveChanges();
-        }
+    public Expedition Create(Expedition expedition) {
+        return this.expeditionDAO.Create(expedition);
+    }
+
+    public Expedition Update(Expedition expedition) {
+        return this.expeditionDAO.Update(expedition);
+    }
+
+    public Expedition Delete(Expedition expedition) {
+        return this.expeditionDAO.Delete(expedition);
     }
 }

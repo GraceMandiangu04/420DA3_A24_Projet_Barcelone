@@ -1,38 +1,34 @@
 ﻿using _420DA3_A24_Projet.Business.Domain;
 using _420DA3_A24_Projet.DataAccess.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using _420DA3_A24_Projet.DataAccess.DAOs;
 
 namespace _420DA3_A24_Projet.Business.Services;
+
 internal class AdresseService {
-    private readonly WsysDbContext _context;
 
-    public AdresseService(WsysDbContext context) {
-        _context = context;
-    }
+    private readonly AdresseDAO adresseDAO;
 
-    public void Create(Adresse adresse) {
-        _context.Adresses.Add(adresse);
-        _context.SaveChanges();
+    public AdresseService(WsysApplication parentApp, WsysDbContext context) {
+        this.adresseDAO = new AdresseDAO(context);
     }
 
     public Adresse? GetById(int id) {
-        return _context.Adresses.Find(id);
+        return this.adresseDAO.GetById(id);
     }
 
-    public void Update(Adresse adresse) {
-        _context.Adresses.Update(adresse);
-        _context.SaveChanges();
+    public List<Adresse> GetAll() {
+        return this.adresseDAO.GetAll();
     }
 
-    public void Delete(int id) {
-        var adresse = _context.Adresses.Find(id);
-        if (adresse != null) {
-            _context.Adresses.Remove(adresse);
-            _context.SaveChanges();
-        }
+    public Adresse Create(Adresse adresse) {
+        return this.adresseDAO.Create(adresse);
+    }
+
+    public Adresse Update(Adresse adresse) {
+        return this.adresseDAO.Update(adresse);
+    }
+
+    public Adresse Delete(Adresse adresse) {
+        return this.adresseDAO.Delete(adresse);
     }
 }
