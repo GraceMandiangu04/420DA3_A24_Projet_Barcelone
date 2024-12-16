@@ -58,7 +58,7 @@ partial class RoleView {
         this.topBarPanel.Dock = DockStyle.Top;
         this.topBarPanel.Location = new Point(0, 0);
         this.topBarPanel.Name = "topBarPanel";
-        this.topBarPanel.Size = new Size(800, 50);
+        this.topBarPanel.Size = new Size(570, 50);
         this.topBarPanel.TabIndex = 0;
         // 
         // openedModeValue
@@ -87,13 +87,13 @@ partial class RoleView {
         this.bottomBarPanel.Dock = DockStyle.Bottom;
         this.bottomBarPanel.Location = new Point(0, 291);
         this.bottomBarPanel.Name = "bottomBarPanel";
-        this.bottomBarPanel.Size = new Size(800, 50);
+        this.bottomBarPanel.Size = new Size(569, 50);
         this.bottomBarPanel.TabIndex = 1;
         // 
         // actionButton
         // 
         this.actionButton.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-        this.actionButton.Location = new Point(587, 15);
+        this.actionButton.Location = new Point(356, 15);
         this.actionButton.Name = "actionButton";
         this.actionButton.Size = new Size(120, 23);
         this.actionButton.TabIndex = 1;
@@ -104,7 +104,7 @@ partial class RoleView {
         // cancelButton
         // 
         this.cancelButton.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-        this.cancelButton.Location = new Point(713, 15);
+        this.cancelButton.Location = new Point(482, 15);
         this.cancelButton.Name = "cancelButton";
         this.cancelButton.Size = new Size(75, 23);
         this.cancelButton.TabIndex = 0;
@@ -124,7 +124,7 @@ partial class RoleView {
         this.centerTLP.Name = "centerTLP";
         this.centerTLP.RowCount = 1;
         this.centerTLP.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-        this.centerTLP.Size = new Size(800, 241);
+        this.centerTLP.Size = new Size(569, 241);
         this.centerTLP.TabIndex = 2;
         // 
         // centerPanel
@@ -142,7 +142,7 @@ partial class RoleView {
         this.centerPanel.Controls.Add(this.idValue);
         this.centerPanel.Controls.Add(this.idLabel);
         this.centerPanel.Dock = DockStyle.Fill;
-        this.centerPanel.Location = new Point(173, 3);
+        this.centerPanel.Location = new Point(57, 3);
         this.centerPanel.Name = "centerPanel";
         this.centerPanel.Size = new Size(454, 235);
         this.centerPanel.TabIndex = 0;
@@ -260,7 +260,7 @@ partial class RoleView {
         // 
         this.AutoScaleDimensions = new SizeF(7F, 15F);
         this.AutoScaleMode = AutoScaleMode.Font;
-        this.ClientSize = new Size(800, 341);
+        this.ClientSize = new Size(569, 341);
         this.Controls.Add(this.centerTLP);
         this.Controls.Add(this.bottomBarPanel);
         this.Controls.Add(this.topBarPanel);
